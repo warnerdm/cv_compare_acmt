@@ -1,0 +1,11 @@
+# Python environment for python/ (the Python version of the core steps). Create with:
+#   conda env create -f environment.yml
+name: cv_compare_acmt
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pandas
+  - numpy
+  - geopandas
+  - pyproj
