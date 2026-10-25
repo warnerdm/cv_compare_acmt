@@ -7,7 +7,8 @@ sampling unit. Successor of trawlcomp's "two-gear" first
 attempt (D:\pyprojects\trawlcomp, docs/TWO_GEAR_METHODS.md: method 1 analytic, method 2 bootstrap, trawl
 post-strata), which is frozen there. This project is self-contained: it reads only its own data folder.
 
-**Read `STATUS.md` first.** It holds the current state, decisions and open questions.
+**Read `STATUS.md` first.** It holds the current state, decisions and open questions. `docs/METHODS.md` describes
+the methods (keep it in step with the code).
 
 ## Data (data/, read only; not in git)
 - acoustic/: EchoNet2Fish interval x 1 m layer output (fish_ha, sigma, NASC, species columns 106.L0/L100, 109.L0,
