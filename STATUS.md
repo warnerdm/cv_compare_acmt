@@ -38,4 +38,8 @@
    sd1046_9_2-9_3 (~5,970 alewife/ha); without it D 852, CV 20%, acoustic 52% / trawl 47%. Kept (real data).
 5. Shares by stratum and lake-wide (step 05): output/shares_by_stratum_2021.png (as trawlcomp two_gear ..._region_layer.png).
 6. Lake-wide mean density by species with +-1 SE and ~95% bars (step 06): output/lake_density_2021.png.
-7. Next: method 2 (bootstrap) on the pooled data.
+7. Python version of the core steps (user, 2026-10-25; for a Python-only collaborator writing a paper on the 2021
+   ship + saildrone data): python/ (cvacmt package, run_method1.py, validate.py, README.md), conda env
+   cv_compare_acmt (environment.yml). Matches R step 03 to ~1e-15 (areas ~2e-8: geometry library versions).
+   Figures stay in R.
+8. Next: method 2 (bootstrap) on the pooled data.

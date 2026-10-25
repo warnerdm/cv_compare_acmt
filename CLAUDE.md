@@ -26,7 +26,11 @@ the methods (keep it in step with the code).
 - Stratum areas = polygon areas (Great Lakes Albers, EPSG 3175), not EchoNet2Fish regarea.
 
 ## Environment
-- R 4.4.0: `C:\Program Files\R\R-4.4.0\bin\Rscript.exe` (tidyverse, sf, mgcv installed).
+- R 4.4.0: `C:\Program Files\R\R-4.4.0\bin\Rscript.exe` (tidyverse, sf, mgcv installed). R is the main version.
+- Python version of the core steps in `python/` (user, 2026-10-25: for a Python-only collaborator writing a paper on
+  the 2021 ship + saildrone data): conda env `cv_compare_acmt` (`environment.yml`; geopandas, pyproj), run from
+  `python/`. `python/validate.py` must match the R output (step 03); keep both versions in step when the method
+  changes. Call `C:\Users\dmwar\miniconda3\envs\cv_compare_acmt\python.exe` with the env's DLL folders on PATH.
 - Code in `R/` (functions); `analysis/` numbered scripts that call them; results in `output/` (git-ignored).
   `run_all.R` runs the scripts in order.
 
