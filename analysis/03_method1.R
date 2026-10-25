@@ -7,7 +7,7 @@ cat("Acoustic units per stratum (platform):\n"); print(au %>% distinct(platform,
 r <- method1(au)
 cat("\nAcoustic density by stratum x layer (fish/ha):\n")
 print(as.data.frame(r$rho %>% mutate(se = sqrt(var_rho), cv = se / rho) %>% select(-var_rho) %>% mutate(across(where(is.double), \(x) signif(x, 3)))))
-cat("\nTrawl proportions (upper by stratum, deep lake-wide); sd = pooled SD used, sd_own = the cell's own SD:\n")
+cat("\nTrawl proportions (upper by stratum, deep lake-wide); sd = sqrt(rho_od p(1-p)) used, sd_own = the cell's own SD:\n")
 print(as.data.frame(r$trawl %>% arrange(group, layer, stratum) %>% mutate(across(where(is.double), \(x) round(x, 3)))))
 cat("\nSpecies density by stratum:\n")
 print(as.data.frame(r$stratum %>% transmute(stratum, group, units, D = round(D, 1), se_D = round(se_D, 1), cv = round(cv_D, 2),

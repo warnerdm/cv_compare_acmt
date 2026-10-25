@@ -18,14 +18,17 @@
 
 - Method 1 on pooled acoustics (step 03, R/estimate.R; user 2026-10-24: five strata above 40 m for both gears; deep
   layer = one lake-wide 2021 trawl proportion, 7 tows; deep trawl variance fully correlated in the lake total).
-  Acoustic CVs per stratum x upper layer 11-26% (12-33 units). Lake-wide 2021 (fish/ha): alewife 1,440 (CV 14%,
-  acoustic 47% / trawl 50%), smelt 147 (CV 57%, trawl 88%), bloater 743 (CV 19%, trawl 78%).
-  ISSUE: the trawl SD pooled across strata (0.21-0.38) is far larger than a stratum's own SD where a species is
-  near 0 or 1 there (no alewife own 0.04, so smelt 0.004), so trawl variance is inflated there (so smelt CV ~50).
+  Goal (user): the contributions of acoustics and trawl to the overall CV, as in trawlcomp's two-gear work.
+- Trawl SE above 40 m: POOLED OVERDISPERSION (user, 2026-10-24): Var(tow p) ~ rho_od x p(1 - p), one rho_od per
+  species from all strata (alewife 0.63, bloater 0.65, smelt 0.55), SD_s = sqrt(rho_od pbar_s(1 - pbar_s)),
+  SE = SD_s / sqrt(n_s). Replaces a plain pooled SD, which inflated strata where a species is near 0 or 1.
+- Results 2021, lake-wide mean density (fish/ha): alewife 1,440 (CV 13%; acoustic 58% / trawl 40%), smelt 147
+  (CV 37%; 20% / 77%), bloater 743 (CV 17%; 24% / 74%). By stratum: acoustics dominate alewife in nn and no;
+  the trawl dominates elsewhere and for bloater and smelt. Acoustic CVs per stratum x upper layer 11-26%.
 
 ## Next (to discuss with the user)
 1. no >= 40 m has no tow: lake-wide deep proportion (as trawlcomp), or another rule?
 2. Ship and saildrone acoustics are POOLED (user, 2026-10-24; no comparison). Pooled acoustic units per stratum:
    nn 25, no 12, sn 33, so 20, wn 13 (ship transects + saildrone drone-nights).
 3. Deep layer without tows (no in 2021): 2021 lake-wide deep proportion (user, as trawlcomp).
-4. Open: trawl SD source / post-strata for the trawl; then method 1 and method 2 on the pooled acoustics.
+4. Next: method 2 (bootstrap) on the pooled data; figures of the acoustic vs trawl shares.

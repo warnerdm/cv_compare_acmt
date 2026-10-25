@@ -3,7 +3,7 @@
 #   by majority. Per interval, rho_layer = sum of fish_ha over its 1 m layers in the layer (by mid-depth); unit value
 #   = mean over its intervals; stratum rho = mean over units.
 # - Trawl: above 40 m by stratum (the year's tows); 40 m and deeper one lake-wide proportion (all 2021 deep tows).
-#   SE(p) above 40 m = SD pooled across strata (deviations from each stratum's mean) / sqrt(stratum's tows);
+#   SE(p) above 40 m = sqrt(rho_od p(1-p)) / sqrt(stratum's tows), rho_od = pooled overdispersion (see trawl_cells);
 #   deep SE = SD of the deep tows / sqrt(their number).
 # - D = rho_upper p_upper + rho_lower p_deep. Var = acoustic + trawl + product (Goodman 1960); acoustic part from the
 #   units' species densities with p fixed (keeps the covariance between layers).
@@ -25,16 +25,21 @@ trawl_cells <- function(tp = tow_props(), strata = c("nn", "no", "sn", "so", "wn
   long <- tp %>% pivot_longer(c(p_alewife, p_smelt, p_bloater), names_to = "group", values_to = "p") %>%
     mutate(group = str_remove(group, "p_"))
   up <- filter(long, layer == "< 40 m")
-  sd_pooled <- up %>% mutate(.by = c(stratum, group), dev = p - mean(p)) %>%
-    summarise(.by = group, sd_pooled = sqrt(sum(dev^2) / (n() - n_distinct(stratum))))
+  # Pooled overdispersion (user, 2026-10-24): a tow proportion's variance ~ rho_od x p(1 - p) (the tow is a cluster;
+  # rho_od = intra-tow correlation for large catches). One rho_od per group from all strata:
+  #   rho_od = sum over strata of sum (p_t - pbar_s)^2 / sum over strata of (n_s - 1) pbar_s (1 - pbar_s)
+  # and each stratum's SD = sqrt(rho_od x pbar_s (1 - pbar_s)), so it scales with the stratum's own composition.
+  rho_od <- up %>% mutate(.by = c(stratum, group), pbar = mean(p), n_s = n()) %>%
+    summarise(.by = c(stratum, group), ss = sum((p - pbar)^2), w = (first(n_s) - 1) * first(pbar) * (1 - first(pbar))) %>%
+    summarise(.by = group, rho_od = sum(ss) / sum(w))
   upper <- up %>% summarise(.by = c(stratum, group), tows = n(), sd_own = if (n() > 1) sd(p) else NA_real_, p = mean(p)) %>%
-    left_join(sd_pooled, by = "group") %>%
-    mutate(layer = layer_of(0), source = "stratum", sd = sd_pooled, se_p = sd / sqrt(tows))
+    left_join(rho_od, by = "group") %>%
+    mutate(layer = layer_of(0), source = "stratum", sd = sqrt(rho_od * p * (1 - p)), se_p = sd / sqrt(tows))
   deep <- filter(long, layer == ">= 40 m") %>%
     summarise(.by = group, tows = n(), sd = sd(p), p = mean(p)) %>%
     mutate(se_p = sd / sqrt(tows), sd_own = sd, layer = layer_of(100), source = "lake-wide deep")
   bind_rows(upper, expand_grid(stratum = strata, deep)) %>%
-    select(stratum, layer, group, source, tows, p, sd, sd_own, se_p)
+    select(stratum, layer, group, source, tows, p, sd, sd_own, se_p, any_of("rho_od"))
 }
 
 method1 <- function(au = acoustic_units(), tr = trawl_cells(), areas = stratum_areas()) {
