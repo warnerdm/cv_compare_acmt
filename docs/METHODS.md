@@ -38,6 +38,18 @@ Builds on trawlcomp's first attempt (`D:\pyprojects\trawlcomp\docs\TWO_GEAR_METH
 - **Lake-wide:** mean density = sum(A_s D_s) / sum(A_s). Strata are independent except for the shared deep
   proportion, whose trawl variance enters as (sum A_s rho_lower,s)^2 SE(p_deep)^2.
 
+## Reading the shares figure (`output/shares_by_stratum_2021.png`, step 05)
+
+- **Purpose:** to show the **relative contribution** of the acoustics and the trawl to the uncertainty of each
+  species' density, and the **patterns** in it: which gear dominates for which species and where. Each bar is a
+  share of one density's variance and always sums to 1, whatever the size of that variance.
+- Patterns in 2021: the acoustics dominate a stratum's main species where the trawl proportion is well
+  determined (alewife in nn and no); the trawl dominates minor species and strata with few or variable tows
+  (bloater and smelt almost everywhere).
+- The CV labels are context only. A bar's shares do not depend on how large the CV is, and a stratum's CV is not a
+  measure of its weight in the lake-wide estimate (see the next section). Bars with very large CVs belong to
+  species that are nearly absent from that stratum.
+
 ## Reading stratum CVs vs the lake-wide CV
 
 The lake-wide CV is usually smaller than every stratum's CV, and strata with very large CVs (hundreds of percent)

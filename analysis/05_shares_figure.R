@@ -19,7 +19,9 @@ p <- ggplot(long, aes(group, share, fill = source)) +
   scale_y_continuous(limits = c(0, 1.1), breaks = c(0, 0.5, 1)) +
   labs(x = NULL, y = "Share of the variance of species density",
        title = "Lake Michigan 2021: where the uncertainty in species density comes from, by stratum",
-       subtitle = "Ship + saildrone acoustics pooled; trawl by stratum above 40 m, lake-wide below; label = CV of the species density") +
+       subtitle = "Relative contribution of each gear to the variance of each species' density (bars sum to 1). Label = CV, for context.",
+       caption = "Ship + saildrone acoustics pooled; trawl by stratum above 40 m, lake-wide below. Large CVs = species nearly absent from that stratum.") +
   theme_bw(base_size = 11) +
-  theme(strip.background = element_rect(fill = "grey92"), legend.position = "bottom", axis.text.x = element_text(angle = 30, hjust = 1))
+  theme(strip.background = element_rect(fill = "grey92"), legend.position = "bottom", axis.text.x = element_text(angle = 30, hjust = 1),
+        plot.caption = element_text(hjust = 0))
 ggsave(file.path(OUTPUT_DIR, "shares_by_stratum_2021.png"), p, width = 13, height = 4.8, dpi = 150)
