@@ -10,8 +10,12 @@
   - Saildrones: 68 drone-nights -> nn 15, no 10, sn 20, so 13, wn 10; 12 cross a boundary (majority 56-92%).
   - Tows: 66 used (119411, an nn tow, excluded) -> nn 20, no 4, sn 23, so 13, wn 6 (output/tows_strata.csv).
 
+- Trawl rules (user, 2026-10-24, as trawlcomp): >= 5 fish of alewife/smelt/bloater (by number, summed over life
+  stages; no size split for now); alewife in tows deeper than 40 m = contamination (set to 0); layers split at 40 m
+  (tows by fishing depth, acoustic 1 m layers by mid-depth). R/trawl.R; step 02 (`analysis/02_trawl_proportions.R`).
+  66 tows: 1 without catch rows, 4 with < 5 fish -> 62 used; 25 alewife removed in 5 deep tows.
+  Tows per stratum x layer (< 40 / >= 40 m): nn 17/1, no 3/0, sn 21/1, so 9/4, wn 5/1. no has no deep tow.
+
 ## Next (to discuss with the user)
-1. Trawl rules carried over from trawlcomp? (>= 5 fish; alewife below 40 m = contamination; species groups:
-   alewife, smelt, bloater, with or without the files' size split 106.L100 / 204.L100.)
-2. Depth layers: the files' slices (epi, meta, lake-wide hypo) or a fixed split (40 m)?
-3. Method 1 (analytic) and method 2 (bootstrap) for ships and for saildrones; compare CVs and gear shares.
+1. no >= 40 m has no tow: lake-wide deep proportion (as trawlcomp), or another rule?
+2. Method 1 (analytic) and method 2 (bootstrap) for ships and for saildrones; compare CVs and gear shares.
