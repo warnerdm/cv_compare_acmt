@@ -31,4 +31,6 @@
 2. Ship and saildrone acoustics are POOLED (user, 2026-10-24; no comparison). Pooled acoustic units per stratum:
    nn 25, no 12, sn 33, so 20, wn 13 (ship transects + saildrone drone-nights).
 3. Deep layer without tows (no in 2021): 2021 lake-wide deep proportion (user, as trawlcomp).
-4. Next: method 2 (bootstrap) on the pooled data; figures of the acoustic vs trawl shares.
+4. Worked-example figure (step 04, STRATUM / GROUP env vars; default sn bloater): output/worked_sn_bloater_2021.png;
+   matches step 03 (D 1,671, SE 406, CV 24%: trawl 80%, acoustic 19%).
+5. Next: method 2 (bootstrap) on the pooled data; figures of the acoustic vs trawl shares.
