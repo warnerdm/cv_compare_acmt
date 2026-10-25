@@ -16,6 +16,13 @@
   66 tows: 1 without catch rows, 4 with < 5 fish -> 62 used; 25 alewife removed in 5 deep tows.
   Tows per stratum x layer (< 40 / >= 40 m): nn 17/1, no 3/0, sn 21/1, so 9/4, wn 5/1. no has no deep tow.
 
+- Method 1 on pooled acoustics (step 03, R/estimate.R; user 2026-10-24: five strata above 40 m for both gears; deep
+  layer = one lake-wide 2021 trawl proportion, 7 tows; deep trawl variance fully correlated in the lake total).
+  Acoustic CVs per stratum x upper layer 11-26% (12-33 units). Lake-wide 2021 (fish/ha): alewife 1,440 (CV 14%,
+  acoustic 47% / trawl 50%), smelt 147 (CV 57%, trawl 88%), bloater 743 (CV 19%, trawl 78%).
+  ISSUE: the trawl SD pooled across strata (0.21-0.38) is far larger than a stratum's own SD where a species is
+  near 0 or 1 there (no alewife own 0.04, so smelt 0.004), so trawl variance is inflated there (so smelt CV ~50).
+
 ## Next (to discuss with the user)
 1. no >= 40 m has no tow: lake-wide deep proportion (as trawlcomp), or another rule?
 2. Ship and saildrone acoustics are POOLED (user, 2026-10-24; no comparison). Pooled acoustic units per stratum:

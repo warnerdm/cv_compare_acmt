@@ -1,0 +1,20 @@
+# Method 1 (analytic): species density by stratum and lake-wide, Lake Michigan 2021, pooled ship + saildrone acoustics.
+source("D:/pyprojects/cv_compare_acmt/R/estimate.R")
+options(width = 220)
+au <- acoustic_units()
+cat("Acoustic units per stratum (platform):\n"); print(au %>% distinct(platform, Region_name, stratum) %>% count(stratum, platform) %>%
+  pivot_wider(names_from = platform, values_from = n) %>% as.data.frame())
+r <- method1(au)
+cat("\nAcoustic density by stratum x layer (fish/ha):\n")
+print(as.data.frame(r$rho %>% mutate(se = sqrt(var_rho), cv = se / rho) %>% select(-var_rho) %>% mutate(across(where(is.double), \(x) signif(x, 3)))))
+cat("\nTrawl proportions (upper by stratum, deep lake-wide); sd = pooled SD used, sd_own = the cell's own SD:\n")
+print(as.data.frame(r$trawl %>% arrange(group, layer, stratum) %>% mutate(across(where(is.double), \(x) round(x, 3)))))
+cat("\nSpecies density by stratum:\n")
+print(as.data.frame(r$stratum %>% transmute(stratum, group, units, D = round(D, 1), se_D = round(se_D, 1), cv = round(cv_D, 2),
+  acoustic = round(share_acoustic, 2), trawl = round(share_trawl, 2), product = round(share_product, 2))))
+cat("\nLake-wide mean density (fish/ha):\n")
+print(as.data.frame(mutate(r$lake, across(where(is.double), \(x) signif(x, 3)))))
+write_csv(r$stratum, file.path(OUTPUT_DIR, "method1_stratum_2021.csv"))
+write_csv(r$lake, file.path(OUTPUT_DIR, "method1_lake_2021.csv"))
+write_csv(r$trawl, file.path(OUTPUT_DIR, "method1_trawl_2021.csv"))
+write_csv(r$rho, file.path(OUTPUT_DIR, "method1_acoustic_2021.csv"))

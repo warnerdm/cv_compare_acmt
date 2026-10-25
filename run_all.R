@@ -2,7 +2,7 @@
 root <- "D:/pyprojects/cv_compare_acmt"
 rscript <- file.path(R.home("bin"), "Rscript.exe")
 dir.create(file.path(root, "output", "logs"), showWarnings = FALSE, recursive = TRUE)
-steps <- c("01_assign_strata", "02_trawl_proportions")
+steps <- c("01_assign_strata", "02_trawl_proportions", "03_method1")
 only <- commandArgs(trailingOnly = TRUE)
 if (length(only)) steps <- steps[substr(steps, 1, 2) %in% only]
 for (s in steps) {
