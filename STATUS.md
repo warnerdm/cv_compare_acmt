@@ -36,4 +36,5 @@
    Also drawn: nn alewife (D 1,056, CV 26%, acoustic 72%) and so bloater (D 1,755, CV 26%, trawl 66%).
    Example (user: a great example): nn alewife's acoustic share comes largely from one drone-night,
    sd1046_9_2-9_3 (~5,970 alewife/ha); without it D 852, CV 20%, acoustic 52% / trawl 47%. Kept (real data).
-5. Next: method 2 (bootstrap) on the pooled data; figures of the acoustic vs trawl shares.
+5. Shares by stratum and lake-wide (step 05): output/shares_by_stratum_2021.png (as trawlcomp two_gear ..._region_layer.png).
+6. Next: method 2 (bootstrap) on the pooled data.
