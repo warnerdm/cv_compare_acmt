@@ -37,4 +37,5 @@
    Example (user: a great example): nn alewife's acoustic share comes largely from one drone-night,
    sd1046_9_2-9_3 (~5,970 alewife/ha); without it D 852, CV 20%, acoustic 52% / trawl 47%. Kept (real data).
 5. Shares by stratum and lake-wide (step 05): output/shares_by_stratum_2021.png (as trawlcomp two_gear ..._region_layer.png).
-6. Next: method 2 (bootstrap) on the pooled data.
+6. Lake-wide mean density by species with +-1 SE and ~95% bars (step 06): output/lake_density_2021.png.
+7. Next: method 2 (bootstrap) on the pooled data.
