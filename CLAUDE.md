@@ -1,7 +1,9 @@
 # cv_compare_acmt
 
-Uncertainty of species density from acoustic + midwater trawl (ACMT) surveys, and the contributions of each gear,
-comparing ship and saildrone acoustics (Lake Michigan 2021 to start). Successor of trawlcomp's "two-gear" first
+Uncertainty of species density from acoustic + midwater trawl (ACMT) surveys, and the contributions of each gear
+(Lake Michigan 2021 to start). Ship and saildrone acoustic data are POOLED into one acoustic data set (user,
+2026-10-24: no ship vs saildrone comparison); each ship transect and each saildrone drone-night is one acoustic
+sampling unit. Successor of trawlcomp's "two-gear" first
 attempt (D:\pyprojects\trawlcomp, docs/TWO_GEAR_METHODS.md: method 1 analytic, method 2 bootstrap, trawl
 post-strata), which is frozen there. This project is self-contained: it reads only its own data folder.
 

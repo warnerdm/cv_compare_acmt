@@ -18,4 +18,7 @@
 
 ## Next (to discuss with the user)
 1. no >= 40 m has no tow: lake-wide deep proportion (as trawlcomp), or another rule?
-2. Method 1 (analytic) and method 2 (bootstrap) for ships and for saildrones; compare CVs and gear shares.
+2. Ship and saildrone acoustics are POOLED (user, 2026-10-24; no comparison). Pooled acoustic units per stratum:
+   nn 25, no 12, sn 33, so 20, wn 13 (ship transects + saildrone drone-nights).
+3. Deep layer without tows (no in 2021): 2021 lake-wide deep proportion (user, as trawlcomp).
+4. Open: trawl SD source / post-strata for the trawl; then method 1 and method 2 on the pooled acoustics.
