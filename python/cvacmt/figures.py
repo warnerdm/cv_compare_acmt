@@ -180,7 +180,7 @@ def lake_shares_years(path=None) -> pd.DataFrame:
     from .paths import ACOUSTIC_FILES, OUTPUT_DIR
     years = [y for y in sorted(ACOUSTIC_FILES) if (OUTPUT_DIR / f"method1_lake_{y}.csv").exists()]
     d = pd.concat([pd.read_csv(OUTPUT_DIR / f"method1_lake_{y}.csv").assign(year=y) for y in years], ignore_index=True)
-    fig, axs = plt.subplots(1, len(GROUP_ORDER), figsize=(11, 5.2), sharey=True)
+    fig, axs = plt.subplots(len(GROUP_ORDER), 1, figsize=(12, 9.5), sharex=True)
     for ax, g in zip(axs, GROUP_ORDER):
         s = d[d["group"] == g].set_index("year").reindex(years)
         bottom = np.zeros(len(s))

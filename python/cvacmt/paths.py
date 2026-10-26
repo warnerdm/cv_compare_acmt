@@ -5,10 +5,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "data"
-# Survey year: env var YEAR (default 2021). 2024 (user, 2026-10-26): ship transects only, run as 2021 (option 1).
+# Survey year: env var YEAR (default 2021). 2011-2019, 2022-2024 (user, 2026-10-26): ship transects only, run as 2021.
 YEAR = int(os.environ.get("YEAR", "2021"))
 # EchoNet2Fish interval x layer files per year and platform
 ACOUSTIC_FILES = {
+    2011: {"ships": "L2 Y2011 ACMT Estimates 60db 2023-02-01 intlaymeans_nph 2023-02-01.csv"},
+    2012: {"ships": "L2 Y2012 ACMT Estimates 60db 2023-02-03 intlaymeans_nph 2023-02-03.csv"},
+    2013: {"ships": "L2 Y2013 ACMT Estimates_2019-05-15 intlaymeans_nph 2019-05-15.csv"},
+    2014: {"ships": "L2 Y2014 ACMT Estimates2023-02-07 intlaymeans_nph 2023-02-07.csv"},
+    2015: {"ships": "L2 Y2015 ACMT Estimates2020-03-11 intlaymeans_nph 2020-03-11.csv"},
+    2016: {"ships": "L2 Y2016 ACMT Estimates2020-03-13 intlaymeans_nph 2020-03-13.csv"},
+    2017: {"ships": "L2 Y2017 ACMT Estimates2020-03-15 intlaymeans_nph 2020-03-15.csv"},
+    2018: {"ships": "L2 Y2018 ACMT Estimates2020-03-15 intlaymeans_nph 2020-03-15.csv"},
+    2019: {"ships": "L2 Y2019 ACMT Estimates2020-07-07 intlaymeans_nph 2020-07-07.csv"},
     2021: {"ships": "L2 Y2021 estimates ships intlaymeans_nph 2026-07-23.csv",
            "saildrone": "L2 Y2021 estimates sd intlaymeans_nph 2025-03-07.csv"},
     2022: {"ships": "L2 Y2022 ACMT Estimates 60db2023-02-23 intlaymeans_nph 2023-02-23.csv"},

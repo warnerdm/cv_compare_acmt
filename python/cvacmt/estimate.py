@@ -13,11 +13,13 @@ import numpy as np
 import pandas as pd
 
 from .data import read_acoustic
-from .paths import PLATFORMS
+from .paths import PLATFORMS, YEAR
 from .strata import stratum_areas
-from .trawl import tow_props, tow_props_all, layer_of, GROUPS, LAYERS
+from .trawl import tow_props, tow_props_all, layer_of, GROUPS, LAYERS, MIN_FISH
 
 STRATA = ["nn", "no", "sn", "so", "wn"]
+# Halves of the lake for strata without upper-layer tows (trawlcomp's north/south rule: wn goes with the south)
+HALVES = {"nn": "north", "no": "north", "sn": "south", "so": "south", "wn": "south"}
 
 
 def _var_mean(x: pd.Series) -> float:
@@ -67,8 +69,30 @@ def trawl_cells(tp: pd.DataFrame | None = None, tp_all: pd.DataFrame | None = No
                .reset_index().merge(sd_pool[["stratum", "group", "sd", "df", "years"]], on=["stratum", "group"], how="left"))
     if upper["sd"].isna().any():
         raise ValueError(f"no pooled upper-layer SD for: {sorted(upper.loc[upper['sd'].isna(), 'stratum'].unique())}")
-    upper["layer"] = LAYERS[0]
     upper["source"] = "stratum"
+    # A stratum without upper-layer tows (>= MIN_FISH fish) in the year borrows the year's tows of its half of the lake
+    # (user, 2026-10-26; so in 2013 and 2014). p = mean of the donor tows; Var(p) = sum_k n_k sd_k^2 / N^2 with sd_k the
+    # donor strata's pooled SDs (N = donor tows); shown as sd = sqrt(sum_k n_k sd_k^2 / N), se_p = sd / sqrt(N).
+    # The shared tows' covariance with the donors enters the lake-wide total (method1).
+    miss = sorted(set(STRATA) - set(upper["stratum"]))
+    if len({HALVES[m] for m in miss}) < len(miss):
+        raise ValueError(f"more than one stratum without upper tows in a half in {YEAR}")
+    borrowed = []
+    for m in miss:
+        don = upper[upper["stratum"].map(HALVES) == HALVES[m]]
+        if don.empty:
+            raise ValueError(f"no upper-layer tows in the {HALVES[m]} half in {YEAR} for {m}")
+        b = (up[up["stratum"].isin(don["stratum"])].groupby("group")
+               .agg(tows=("p", "size"), sd_own=("p", _sd_or_nan), p=("p", "mean")).reset_index())
+        nsd2 = (don["tows"] * don["sd"] ** 2).groupby(don["group"]).sum().rename("nsd2").reset_index()
+        b = b.merge(nsd2, on="group")
+        b["sd"] = np.sqrt(b["nsd2"] / b["tows"])
+        b["stratum"] = m
+        b["source"] = f"{HALVES[m]} half"
+        b["donors"] = "+".join(sorted(don["stratum"].unique()))
+        borrowed.append(b.drop(columns="nsd2"))
+    upper = pd.concat([upper] + borrowed, ignore_index=True)
+    upper["layer"] = LAYERS[0]
     upper["se_p"] = upper["sd"] / np.sqrt(upper["tows"])
     own = long[long["layer"] == LAYERS[1]].groupby("group")["p"].agg(_sd_or_nan).rename("sd_own").reset_index()
     da = la[la["layer"] == LAYERS[1]]
@@ -80,6 +104,8 @@ def trawl_cells(tp: pd.DataFrame | None = None, tp_all: pd.DataFrame | None = No
     dp["source"] = "lake-wide deep, all years"
     deep = pd.concat([dp.assign(stratum=s) for s in STRATA], ignore_index=True)
     cols = ["stratum", "layer", "group", "source", "tows", "p", "sd", "sd_own", "se_p", "df", "years"]
+    if "donors" in upper.columns:
+        cols.append("donors")
     return pd.concat([upper, deep], ignore_index=True).reindex(columns=cols)
 
 
@@ -111,6 +137,13 @@ def method1(au: pd.DataFrame | None = None, tr: pd.DataFrame | None = None, area
     up = (rho[rho["layer"] == LAYERS[0]].merge(tr[tr["layer"] == LAYERS[0]], on=["stratum", "layer"])
              .merge(areas, on="stratum"))
     v_up = (up["area_ha"] ** 2 * up["rho"] ** 2 * up["se_p"] ** 2).groupby(up["group"]).sum()
+    # a stratum that borrowed its half's tows: covariance with each donor stratum k, Cov(p_b, p_k) = sd_k^2 / N
+    if "donors" in tr.columns and tr["donors"].notna().any():
+        ar = (up["area_ha"] * up["rho"]).groupby([up["stratum"], up["group"]]).first()
+        sdk = up.set_index(["stratum", "group"])["sd"]
+        for _, r in tr[(tr["layer"] == LAYERS[0]) & tr["donors"].notna()].iterrows():
+            for k in r["donors"].split("+"):
+                v_up[r["group"]] += 2 * ar[(r["stratum"], r["group"])] * ar[(k, r["group"])] * sdk[(k, r["group"])] ** 2 / r["tows"]
     lo = rho[rho["layer"] == LAYERS[1]].merge(areas, on="stratum")
     s_lo = (lo["area_ha"] * lo["rho"]).sum()
     se_deep = tr[tr["layer"] == LAYERS[1]].drop_duplicates("group").set_index("group")["se_p"]

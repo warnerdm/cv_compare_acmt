@@ -38,6 +38,23 @@ trawl_cells <- function(tp = tow_props(), tp_all = tow_props_all(), strata = c("
     left_join(sd_pool, by = c("stratum", "group")) %>%
     mutate(layer = layer_of(0), source = "stratum", se_p = sd / sqrt(tows))
   if (anyNA(upper$sd)) stop("no pooled upper-layer SD for: ", paste(unique(upper$stratum[is.na(upper$sd)]), collapse = ", "))
+  # A stratum without upper-layer tows (>= MIN_FISH fish) in the year borrows the year's tows of its half of the lake
+  # (user, 2026-10-26; so in 2013 and 2014). p = mean of the donor tows; Var(p) = sum_k n_k sd_k^2 / N^2 with sd_k the
+  # donor strata's pooled SDs (N = donor tows); shown as sd = sqrt(sum_k n_k sd_k^2 / N), se_p = sd / sqrt(N).
+  # The shared tows' covariance with the donors enters the lake-wide total (method1).
+  miss <- setdiff(strata, upper$stratum)
+  if (any(duplicated(HALVES[miss]))) stop("more than one stratum without upper tows in a half in ", YEAR)
+  borrowed <- map_dfr(miss, \(m) {
+    don <- upper %>% filter(HALVES[stratum] == HALVES[m])
+    if (!nrow(don)) stop("no upper-layer tows in the ", HALVES[m], " half in ", YEAR, " for ", m)
+    up %>% filter(stratum %in% don$stratum) %>%
+      summarise(.by = group, tows = n(), sd_own = sd(p), p = mean(p)) %>%
+      left_join(don %>% summarise(.by = group, nsd2 = sum(tows * sd^2)), by = "group") %>%
+      mutate(stratum = m, sd = sqrt(nsd2 / tows), se_p = sd / sqrt(tows), layer = layer_of(0),
+             source = paste0(HALVES[m], " half"), donors = paste(sort(unique(don$stratum)), collapse = "+")) %>%
+      select(-nsd2)
+  })
+  upper <- bind_rows(upper, borrowed)
   sd_own_deep <- filter(to_long(tp), layer == ">= 40 m") %>%
     summarise(.by = group, sd_own = if (n() > 1) sd(p) else NA_real_)
   deep <- filter(to_long(tp_all), layer == ">= 40 m") %>%
@@ -45,8 +62,11 @@ trawl_cells <- function(tp = tow_props(), tp_all = tow_props_all(), strata = c("
     left_join(sd_own_deep, by = "group") %>%
     mutate(se_p = sd / sqrt(tows), layer = layer_of(100), source = "lake-wide deep, all years")
   bind_rows(upper, expand_grid(stratum = strata, deep)) %>%
-    select(stratum, layer, group, source, tows, p, sd, sd_own, se_p, df, years)
+    select(stratum, layer, group, source, tows, p, sd, sd_own, se_p, df, years, any_of("donors"))
 }
+
+# Halves of the lake for strata without upper-layer tows (trawlcomp's north/south rule: wn goes with the south)
+HALVES <- c(nn = "north", no = "north", sn = "south", so = "south", wn = "south")
 
 method1 <- function(au = acoustic_units(), tr = trawl_cells(), areas = stratum_areas()) {
   w <- tr %>% select(stratum, layer, group, p)
@@ -65,6 +85,17 @@ method1 <- function(au = acoustic_units(), tr = trawl_cells(), areas = stratum_a
   A <- sum(areas$area_ha)
   up_tr <- rho %>% filter(layer == "< 40 m") %>% inner_join(filter(tr, layer == "< 40 m"), by = c("stratum", "layer")) %>%
     left_join(areas, by = "stratum") %>% summarise(.by = group, v = sum(area_ha^2 * rho^2 * se_p^2))
+  # a stratum that borrowed its half's tows: covariance with each donor stratum k, Cov(p_b, p_k) = sd_k^2 / N
+  if ("donors" %in% names(tr) && any(!is.na(tr$donors))) {
+    ur <- rho %>% filter(layer == "< 40 m") %>% left_join(areas, by = "stratum") %>% transmute(stratum, ar = area_ha * rho)
+    cv_tr <- tr %>% filter(layer == "< 40 m", !is.na(donors)) %>% select(stratum, group, N = tows, donors) %>%
+      separate_longer_delim(donors, "+") %>%
+      left_join(ur, by = "stratum") %>%
+      left_join(tr %>% filter(layer == "< 40 m") %>% select(donors = stratum, group, sd_k = sd), by = c("donors", "group")) %>%
+      left_join(rename(ur, donors = stratum, ar_k = ar), by = "donors") %>%
+      summarise(.by = group, cov = sum(2 * ar * ar_k * sd_k^2 / N))
+    up_tr <- up_tr %>% left_join(cv_tr, by = "group") %>% mutate(v = v + coalesce(cov, 0)) %>% select(-cov)
+  }
   dp_tr <- rho %>% filter(layer == ">= 40 m") %>% left_join(areas, by = "stratum") %>%
     cross_join(filter(tr, layer == ">= 40 m") %>% distinct(group, se_p)) %>%
     summarise(.by = group, v = sum(area_ha * rho)^2 * first(se_p)^2)
