@@ -2,7 +2,7 @@
 
 Uncertainty of species density from acoustic + midwater trawl (ACMT) surveys, and the contributions of each gear
 (Lake Michigan 2011-2024). Acoustics: SHIP transects only, every year (user, 2026-10-26: "for now I just want to
-include ship data"; replaces the 2024-10-24 pooling of 2021 ship + saildrone, still available as PLATFORM=all). Each
+include ship data"; replaces the 2026-10-24 pooling of 2021 ship + saildrone, still available as PLATFORM=all). Each
 ship transect (or saildrone drone-night) is one acoustic sampling unit. Successor of trawlcomp's "two-gear" first
 attempt (D:\pyprojects\trawlcomp, docs/TWO_GEAR_METHODS.md: method 1 analytic, method 2 bootstrap, trawl
 post-strata), which is frozen there. This project is self-contained: it reads only its own data folder.
