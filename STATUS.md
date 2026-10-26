@@ -86,4 +86,6 @@
    Lake-wide CV (acoustic share) pooled / ships (35 transects) / saildrone (68 drone-nights): alewife 13 (54) / 13 (57) /
    14 (62); smelt 53 (9) / 47 (8) / 55 (18); bloater 18 (23) / 22 (60) / 18 (29). Saildrone densities higher than ship
    in every stratum and species (lake-wide alewife 1,615 vs 1,055; bloater 829 vs 590; smelt 167 vs 114).
+   User (2026-10-26): limited to data at the same location within 24 h the platform difference all but disappears;
+   it reflects where and when each platform sampled (coverage), not the platforms. Supports pooling.
 16. Next: method 2 (bootstrap) on the pooled data.
