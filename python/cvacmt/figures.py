@@ -189,8 +189,7 @@ def lake_shares_years(path=None) -> pd.DataFrame:
             bottom += s["share_" + src].to_numpy()
         for i, (cv, dens) in enumerate(zip(s["cv"], s["density"])):
             ax.text(i, 1.04, f"CV {100 * cv:.0f}%\n{dens:.0f}/ha", ha="center", va="bottom", fontsize=7)
-        labs = [f"{y}\n{'ship + saildrone' if len(ACOUSTIC_FILES[y]) > 1 else 'ship'}" for y in years]
-        ax.set_xticks(range(len(s)), labs, fontsize=8)
+        ax.set_xticks(range(len(s)), [str(y) for y in years], fontsize=8)
         ax.set_title(g, fontsize=10, backgroundcolor="0.92")
         ax.set_ylim(0, 1.28)
         ax.set_yticks([0, 0.5, 1])
@@ -200,8 +199,8 @@ def lake_shares_years(path=None) -> pd.DataFrame:
     fig.suptitle(f"Lake Michigan {min(years)}-{max(years)}: where the uncertainty in lake-wide species density comes from\n"
                  "Relative contribution of each gear (bars sum to 1). Label = CV and lake-wide mean density, for context.",
                  x=0.01, ha="left", fontsize=10)
-    fig.text(0.01, 0.01, "Acoustic units per year: 2021 ship transects + saildrone drone-nights (103); other years ship "
-             f"transects only (20-29). No survey in 2020.\nTrawl: each year's stratum proportions above 40 m with the between-tow SD pooled "
+    fig.text(0.01, 0.01, "Acoustics: ship transects only (20-35 a year; 2021 saildrone data not used). "
+             f"No survey in 2020.\nTrawl: each year's stratum proportions above 40 m with the between-tow SD pooled "
              f"over {min(TRAWL_YEARS)}-{max(TRAWL_YEARS)}; deep proportion from all years' deep tows. so 2013-2014: no upper "
              "tows, south half (sn + wn) used.", fontsize=8)
     fig.tight_layout(rect=(0, 0.1, 1, 1))
@@ -237,8 +236,8 @@ def lake_density_years(path=None) -> pd.DataFrame:
     fig.suptitle(f"Lake Michigan {min(years)}-{max(years)}: lake-wide mean density by species\n"
                  "Thick bar = +-1 SE; thin bar = approximate 95% interval (+-1.96 SE, truncated at 0). Label = CV.",
                  x=0.01, ha="left", fontsize=10)
-    fig.text(0.01, 0.01, "Area-weighted over the five strata; all sizes, by number. Acoustics: 2021 ship + saildrone, "
-             f"other years ship transects. No survey in 2020.\nTrawl spread pooled over {min(TRAWL_YEARS)}-"
+    fig.text(0.01, 0.01, "Area-weighted over the five strata; all sizes, by number. Acoustics: ship transects only "
+             f"(2021 saildrone data not used). No survey in 2020.\nTrawl spread pooled over {min(TRAWL_YEARS)}-"
              f"{max(TRAWL_YEARS)}; deep proportion from all years' deep tows.", fontsize=8)
     fig.tight_layout(rect=(0, 0.05, 1, 1))
     if path is not None:

@@ -1,9 +1,9 @@
 # cv_compare_acmt
 
 Uncertainty of species density from acoustic + midwater trawl (ACMT) surveys, and the contributions of each gear
-(Lake Michigan 2021 to start). Ship and saildrone acoustic data are POOLED into one acoustic data set (user,
-2026-10-24: no ship vs saildrone comparison); each ship transect and each saildrone drone-night is one acoustic
-sampling unit. Successor of trawlcomp's "two-gear" first
+(Lake Michigan 2011-2024). Acoustics: SHIP transects only, every year (user, 2026-10-26: "for now I just want to
+include ship data"; replaces the 2024-10-24 pooling of 2021 ship + saildrone, still available as PLATFORM=all). Each
+ship transect (or saildrone drone-night) is one acoustic sampling unit. Successor of trawlcomp's "two-gear" first
 attempt (D:\pyprojects\trawlcomp, docs/TWO_GEAR_METHODS.md: method 1 analytic, method 2 bootstrap, trawl
 post-strata), which is frozen there. This project is self-contained: it reads only its own data folder.
 
@@ -33,7 +33,8 @@ the methods (keep it in step with the code).
   the 2021 ship + saildrone data): conda env `cv_compare_acmt` (`environment.yml`; geopandas, pyproj), run from
   `python/`. `python/validate.py` must match the R output (step 03); keep both versions in step when the method
   changes. Call `C:\Users\dmwar\miniconda3\envs\cv_compare_acmt\python.exe` with the env's DLL folders on PATH.
-- Optional env var `PLATFORM` (ships / saildrone; 2021 only has both): single-platform run, outputs `<name>_<year>_<platform>`.
+- Env var `PLATFORM`: ships (default, plain output names), saildrone or all (2021 pooled ship + saildrone); non-default
+  runs write `<name>_<year>_<platform>`.
 - Survey year (2026-10-26): env var `YEAR` (default 2021; 2011-2019, 2021-2024), read in `R/paths.R` / `python/cvacmt/paths.py`
   (`ACOUSTIC_FILES` lists each year's acoustic files by platform). E.g. `YEAR=2024 Rscript run_all.R`.
   fish_ha Inf (sigma = 0) or NA = 0, as EchoNet2Fish (user, 2026-10-26).

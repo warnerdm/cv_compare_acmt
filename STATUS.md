@@ -88,4 +88,8 @@
    in every stratum and species (lake-wide alewife 1,615 vs 1,055; bloater 829 vs 590; smelt 167 vs 114).
    User (2026-10-26): limited to data at the same location within 24 h the platform difference all but disappears;
    it reflects where and when each platform sampled (coverage), not the platforms. Supports pooling.
-16. Next: method 2 (bootstrap) on the pooled data.
+16. Ship data only by default (user, 2026-10-26: "for now I just want to include ship data"): PLATFORM default =
+   ships for every year; 2021 pooled = PLATFORM=all (outputs *_2021_all), saildrone = PLATFORM=saildrone. 2021 default
+   rerun: lake-wide alewife 1,055/ha (CV 13%; acoustic 57%), smelt 114 (47%; 8%), bloater 590 (22%; 60%). Cross-year
+   figures (07, 08) redrawn ship-only. Python matches R (ships, all, saildrone).
+17. Next: method 2 (bootstrap).

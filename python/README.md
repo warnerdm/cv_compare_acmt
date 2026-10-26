@@ -1,8 +1,9 @@
 # Python version (core steps)
 
-A Python version of the project's core steps for Lake Michigan 2021, mirroring the R code in `../R/`:
+A Python version of the project's core steps for Lake Michigan (any year 2011-2024; env var YEAR), mirroring the R code in `../R/`:
 strata from the shapefile (point-in-polygon, majority per acoustic unit, polygon areas), the trawl rules and
-proportions, pooled ship + saildrone acoustic units, and method 1 (species density with its acoustic, trawl and
+proportions, acoustic units (ship transects by default; env var PLATFORM=all pools the 2021 saildrone drone-nights,
+PLATFORM=saildrone runs them alone), and method 1 (species density with its acoustic, trawl and
 product variance, by stratum and lake-wide). See `../docs/METHODS.md` for the methods.
 
 | Module | Mirrors | Contents |

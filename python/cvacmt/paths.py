@@ -25,12 +25,12 @@ ACOUSTIC_FILES = {
     2024: {"ships": "L2 Y2024 ACMT Estimates2025-01-17 intlaymeans_nph 2025-01-17.csv"},
 }
 ACOUSTIC = {k: DATA_DIR / "acoustic" / v for k, v in ACOUSTIC_FILES[YEAR].items()}
-# Optional single platform (env var PLATFORM = ships or saildrone; empty = all pooled, the default). 2026-10-26: user
-# asked to compare ship-only and saildrone-only 2021 estimates with the pooled one; outputs tagged _<year>_<platform>.
-PLATFORM = os.environ.get("PLATFORM", "")
-if PLATFORM:
+# Platform (env var PLATFORM): ships (default; user 2026-10-26: ship data only for now, every year), saildrone, or all
+# (pooled ship + saildrone, 2021). Non-default runs are tagged _<year>_<platform> in output names.
+PLATFORM = os.environ.get("PLATFORM", "ships")
+if PLATFORM != "all":
     ACOUSTIC = {PLATFORM: ACOUSTIC[PLATFORM]}
-RUN_TAG = f"{YEAR}_{PLATFORM}" if PLATFORM else str(YEAR)
+RUN_TAG = str(YEAR) if PLATFORM == "ships" else f"{YEAR}_{PLATFORM}"
 PLATFORMS = list(ACOUSTIC)
 ACOUSTIC_DESC = ("ship + saildrone acoustics pooled" if len(PLATFORMS) > 1
                  else f"{PLATFORMS[0].removesuffix('s')} acoustics only")

@@ -7,8 +7,8 @@ Builds on trawlcomp's first attempt (`D:\pyprojects\trawlcomp\docs\TWO_GEAR_METH
 
 - **Year:** set by env var `YEAR` (2011-2019, 2021-2024; no survey in 2020; default 2021).
 - **Acoustics:** EchoNet2Fish interval x layer output (`fish_ha`, sigma from in-situ TS; 1 m layers in 2021, 10 m in
-  2022 and 2024, 5 m in 2023). 2021: ship transects and saildrone drone-nights **pooled** into one data set; 2022-2024:
-  ship transects only (20-26, typical effort). Each ship transect and each drone-night is one sampling unit.
+  2022 and 2024, 5 m in 2023). **Ship transects only**, every year (20-35 a year; user 2026-10-26). 2021 saildrone drone-nights can be added
+  (`PLATFORM=all`, pooled) or run alone (`PLATFORM=saildrone`). Each transect or drone-night is one sampling unit.
   `fish_ha` Inf (sigma = 0, no single targets) or NA is set to 0, as in EchoNet2Fish.
 - **Trawl:** the year's midwater tows (L_2_Y survey files; 2021 also 25 TARGET 119 tows made during the survey; 119411
   excluded as experimental). For the trawl spread and the deep proportion, all years with trawl files in `data/trawl`

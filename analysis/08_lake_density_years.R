@@ -8,8 +8,7 @@ years <- years[file.exists(file.path(OUTPUT_DIR, sprintf("method1_lake_%d.csv", 
 d <- map_dfr(years, \(y) read_csv(file.path(OUTPUT_DIR, sprintf("method1_lake_%d.csv", y)), show_col_types = FALSE) %>%
                mutate(year = y)) %>%
   mutate(group = factor(group, c("alewife", "smelt", "bloater")),
-         lo95 = pmax(0, density - 1.96 * se_density), hi95 = density + 1.96 * se_density,
-         platform = if_else(map_int(year, \(y) length(ACOUSTIC_FILES[[as.character(y)]])) > 1, "ship + saildrone", "ship"))
+         lo95 = pmax(0, density - 1.96 * se_density), hi95 = density + 1.96 * se_density)
 p <- ggplot(d, aes(year, density, fill = group)) +
   geom_col(width = 0.7, alpha = 0.45) +
   geom_errorbar(aes(ymin = lo95, ymax = hi95), width = 0.25, linewidth = 0.4) +
@@ -22,7 +21,7 @@ p <- ggplot(d, aes(year, density, fill = group)) +
   labs(x = NULL, y = "Lake-wide mean density (fish/ha)",
        title = sprintf("Lake Michigan %d-%d: lake-wide mean density by species", min(years), max(years)),
        subtitle = "Thick bar = +-1 SE; thin bar = approximate 95% interval (+-1.96 SE, truncated at 0). Label = CV.\nMethod 1: acoustic + trawl uncertainty combined.",
-       caption = paste0("Area-weighted over the five strata; all sizes, by number. Acoustics: 2021 ship + saildrone, other years ship transects. ",
+       caption = paste0("Area-weighted over the five strata; all sizes, by number. Acoustics: ship transects only (2021 saildrone data not used). ",
                         "No survey in 2020.\n", sprintf("Trawl spread pooled over %d-%d; deep proportion from all years' deep tows.", min(TRAWL_YEARS), max(TRAWL_YEARS)))) +
   theme_bw(base_size = 11) +
   theme(strip.background = element_rect(fill = "grey92"), plot.caption = element_text(hjust = 0))

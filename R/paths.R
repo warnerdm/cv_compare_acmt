@@ -22,14 +22,14 @@ ACOUSTIC_FILES <- list(
 stopifnot(as.character(YEAR) %in% names(ACOUSTIC_FILES))
 ACOUSTIC    <- setNames(file.path(DATA_DIR, "acoustic", ACOUSTIC_FILES[[as.character(YEAR)]]),
                         names(ACOUSTIC_FILES[[as.character(YEAR)]]))
-# Optional single platform (env var PLATFORM = ships or saildrone; empty = all pooled, the default). 2026-10-26: user
-# asked to compare ship-only and saildrone-only 2021 estimates with the pooled one; outputs tagged _<year>_<platform>.
-PLATFORM    <- Sys.getenv("PLATFORM", "")
-if (nzchar(PLATFORM)) {
+# Platform (env var PLATFORM): ships (default; user 2026-10-26: ship data only for now, every year), saildrone, or all
+# (pooled ship + saildrone, 2021). Non-default runs are tagged _<year>_<platform> in output names.
+PLATFORM    <- Sys.getenv("PLATFORM", "ships")
+if (PLATFORM != "all") {
   stopifnot(PLATFORM %in% names(ACOUSTIC))
   ACOUSTIC <- ACOUSTIC[PLATFORM]
 }
-RUN_TAG     <- if (nzchar(PLATFORM)) paste0(YEAR, "_", PLATFORM) else as.character(YEAR)
+RUN_TAG     <- if (PLATFORM == "ships") as.character(YEAR) else paste0(YEAR, "_", PLATFORM)
 PLATFORMS   <- names(ACOUSTIC)
 ACOUSTIC_DESC <- if (length(PLATFORMS) > 1) "ship + saildrone acoustics pooled" else paste(sub("s$", "", PLATFORMS), "acoustics only")
 TRAWL_DIR   <- file.path(DATA_DIR, "trawl")
