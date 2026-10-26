@@ -64,8 +64,8 @@
 11. Trawl pooled across years (user, 2026-10-26; replaces within-year rho_od): upper SD = stratum's pooled within-year
    SD over all years in data/trawl (2011-2019, 2021-2024; df 32-102 per stratum), SE = SD / sqrt(the year's tows);
    deep p and SD from all 57 deep tows (12 years; bloater 0.951, smelt 0.049, SE 0.023). All 4 years rerun; Python
-   matches R (<= 5e-8). 11 tows have FISHING_DEPTH 0 (surface tows; kept). Query: 2015 tow 92795 (so2, 112 m water,
-   111 bloater + 43 alewife at "0 m") may be a missing depth.
+   matches R (<= 5e-8). 11 tows have FISHING_DEPTH 0 (surface tows; kept). 2015 tow 92795 (so2, 112 m water) is a
+   real surface tow: 111 age-0 bloater 23-52 mm + 43 small alewife (user, 2026-10-26).
    Lake-wide CV year-only -> pooled (acoustic share pooled): 2021 alewife 13->13 (54%), smelt 37->53 (9%), bloater
    17->18 (23%); 2022 23->23 (74%), 44->37 (23%), 30->29 (88%); 2023 38->37 (86%), 50->46 (40%), 72->64 (44%);
    2024 31->27 (51%), 79->97 (5%), 27->22 (45%).
