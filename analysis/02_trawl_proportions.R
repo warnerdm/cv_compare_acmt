@@ -1,4 +1,4 @@
-# 2021 tows: catch, rules applied, tows per stratum x layer, mean proportions.
+# The year's tows: catch, rules applied, tows per stratum x layer, mean proportions.
 source("D:/pyprojects/cv_compare_acmt/R/trawl.R")
 options(width = 200)
 tc <- tow_catch()
@@ -10,4 +10,4 @@ cat("used:", nrow(tp), "\n")
 s <- tp %>% summarise(.by = c(stratum, layer), tows = n(), alewife = mean(p_alewife), smelt = mean(p_smelt), bloater = mean(p_bloater)) %>%
   arrange(stratum, layer) %>% mutate(across(c(alewife, smelt, bloater), \(x) round(x, 2)))
 print(as.data.frame(s))
-write_csv(tp, file.path(OUTPUT_DIR, "tow_props_2021.csv"))
+write_csv(tp, out_file("tow_props"))

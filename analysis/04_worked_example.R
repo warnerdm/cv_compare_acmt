@@ -1,5 +1,5 @@
-# Method 1 drawn step by step for one stratum and species (env vars STRATUM, GROUP; default sn, bloater), 2021,
-# pooled ship + saildrone acoustics: A acoustic units by layer; B tow proportions (stratum above 40 m, lake-wide deep);
+# Method 1 drawn step by step for one stratum and species (env vars STRATUM, GROUP; default sn, bloater), year YEAR,
+# pooled acoustic platforms: A acoustic units by layer; B tow proportions (stratum above 40 m, lake-wide deep);
 # C each unit's species density with p fixed; D the variance contributions. Matches step 03.
 source("D:/pyprojects/cv_compare_acmt/R/estimate.R")
 suppressMessages(library(patchwork))
@@ -24,7 +24,7 @@ pA <- ggplot(au, aes(layer, fish_ha)) +
   scale_shape_manual(values = c(ships = 16, saildrone = 17), name = NULL) +
   scale_x_discrete(expand = expansion(add = c(0.5, 1.3))) +
   labs(x = "Depth layer", y = "Fish/ha (all species)", title = "A. Acoustics: each point is one transect or drone-night",
-       subtitle = "rho = mean of units (ships + saildrones pooled); SE = SD / sqrt(units)") +
+       subtitle = paste0("rho = mean of units (", ACOUSTIC_DESC, "); SE = SD / sqrt(units)")) +
   theme_bw(base_size = 10) + theme(legend.position = c(0.85, 0.85), legend.background = element_blank())
 
 # B: tows (stratum above 40 m; all deep tows lake-wide)
@@ -41,7 +41,7 @@ pB <- ggplot(B, aes(layer, p)) +
   geom_text(data = trB, aes(y = p, label = label), position = position_nudge(x = 0.45), hjust = 0, size = 3) +
   scale_y_continuous(limits = c(0, 1.05)) + scale_x_discrete(expand = expansion(add = c(0.5, 1.6))) +
   labs(x = "Depth layer (tow fishing depth)", y = paste("Proportion", GROUP), title = "B. Trawl: each point is one tow",
-       subtitle = sprintf("Above 40 m: %s's 2021 tows; 40 m and deeper: all 2021 deep tows (lake-wide)", STRATUM)) +
+       subtitle = sprintf("Above 40 m: %s's %d tows; 40 m and deeper: all %d deep tows (lake-wide)", STRATUM, YEAR, YEAR)) +
   theme_bw(base_size = 10)
 
 # C: unit species density with p fixed
@@ -74,7 +74,7 @@ pD <- ggplot(vt, aes(term, value, fill = term)) + geom_col(width = 0.6) +
   theme_bw(base_size = 10) + theme(plot.caption = element_text(hjust = 0, size = 8))
 
 p <- (pA | pB) / (pC | pD) + plot_annotation(
-  title = sprintf("Method 1 step by step: %s in stratum %s, Lake Michigan 2021 (ship + saildrone acoustics pooled)", GROUP, STRATUM),
+  title = sprintf("Method 1 step by step: %s in stratum %s, Lake Michigan %d (%s)", GROUP, STRATUM, YEAR, ACOUSTIC_DESC),
   subtitle = "Species density D = rho_upper x p_upper + rho_lower x p_deep (layers split at 40 m)")
-ggsave(file.path(OUTPUT_DIR, sprintf("worked_%s_%s_2021.png", STRATUM, GROUP)), p, width = 14, height = 9, dpi = 150)
+ggsave(out_file(sprintf("worked_%s_%s", STRATUM, GROUP), "png"), p, width = 14, height = 9, dpi = 150)
 cat(sprintf("D %.1f, var_ac %.0f, var_tr %.0f, var_x %.0f, SE %.1f, CV %.3f\n", Dm, var_ac, var_tr, var_x, sqrt(tot), sqrt(tot) / Dm))

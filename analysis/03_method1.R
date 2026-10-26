@@ -1,4 +1,4 @@
-# Method 1 (analytic): species density by stratum and lake-wide, Lake Michigan 2021, pooled ship + saildrone acoustics.
+# Method 1 (analytic): species density by stratum and lake-wide, Lake Michigan, year YEAR, pooled acoustic platforms.
 source("D:/pyprojects/cv_compare_acmt/R/estimate.R")
 options(width = 220)
 au <- acoustic_units()
@@ -14,7 +14,7 @@ print(as.data.frame(r$stratum %>% transmute(stratum, group, units, D = round(D, 
   acoustic = round(share_acoustic, 2), trawl = round(share_trawl, 2), product = round(share_product, 2))))
 cat("\nLake-wide mean density (fish/ha):\n")
 print(as.data.frame(mutate(r$lake, across(where(is.double), \(x) signif(x, 3)))))
-write_csv(r$stratum, file.path(OUTPUT_DIR, "method1_stratum_2021.csv"))
-write_csv(r$lake, file.path(OUTPUT_DIR, "method1_lake_2021.csv"))
-write_csv(r$trawl, file.path(OUTPUT_DIR, "method1_trawl_2021.csv"))
-write_csv(r$rho, file.path(OUTPUT_DIR, "method1_acoustic_2021.csv"))
+write_csv(r$stratum, out_file("method1_stratum"))
+write_csv(r$lake, out_file("method1_lake"))
+write_csv(r$trawl, out_file("method1_trawl"))
+write_csv(r$rho, out_file("method1_acoustic"))

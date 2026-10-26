@@ -20,7 +20,8 @@ product variance, by stratum and lake-wide). See `../docs/METHODS.md` for the me
 conda env create -f ../environment.yml      # once: python 3.12, pandas, numpy, geopandas, pyproj, matplotlib
 conda activate cv_compare_acmt
 cd python
-python run_method1.py   # writes output/python/method1_*.csv (same names and columns as R step 03)
+# year: set env var YEAR (default 2021; 2024 available), e.g. YEAR=2024 python run_method1.py
+python run_method1.py   # writes output/python/method1_*_<year>.csv (same names and columns as R step 03)
 python validate.py      # compares with the R output (output/method1_*.csv); needs R step 03 run first
 python make_figures.py  # output/python: worked_<stratum>_<group>_2021.png (sn bloater, nn alewife,
                         # so bloater; others with --worked so:alewife), shares_by_stratum_2021.png, lake_density_2021.png

@@ -3,20 +3,20 @@ import sys
 
 import pandas as pd
 
-from cvacmt.paths import ROOT, OUTPUT_DIR
+from cvacmt.paths import ROOT, OUTPUT_DIR, YEAR, out_name
 
 R_DIR = ROOT / "output"
 CHECKS = [
-    ("method1_stratum_2021.csv", ["stratum", "group"], ["units", "D", "var_ac", "var_tr", "var_x", "se_D", "cv_D", "area_ha"]),
-    ("method1_lake_2021.csv", ["group"], ["density", "se_density", "cv", "share_acoustic", "share_trawl", "share_product", "N"]),
-    ("method1_trawl_2021.csv", ["stratum", "layer", "group"], ["tows", "p", "sd", "se_p"]),
-    ("method1_acoustic_2021.csv", ["stratum", "layer"], ["units", "rho", "var_rho"]),
+    ("method1_stratum", ["stratum", "group"], ["units", "D", "var_ac", "var_tr", "var_x", "se_D", "cv_D", "area_ha"]),
+    ("method1_lake", ["group"], ["density", "se_density", "cv", "share_acoustic", "share_trawl", "share_product", "N"]),
+    ("method1_trawl", ["stratum", "layer", "group"], ["tows", "p", "sd", "se_p"]),
+    ("method1_acoustic", ["stratum", "layer"], ["units", "rho", "var_rho"]),
 ]
 
 worst = 0.0
 for name, keys, cols in CHECKS:
-    a = pd.read_csv(R_DIR / name)
-    b = pd.read_csv(OUTPUT_DIR / name)
+    a = pd.read_csv(R_DIR / out_name(name))
+    b = pd.read_csv(OUTPUT_DIR / out_name(name))
     m = a.merge(b, on=keys, suffixes=("_R", "_py"), how="outer", indicator=True)
     if not (m["_merge"] == "both").all():
         print(f"{name}: rows differ between R and Python")

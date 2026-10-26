@@ -1,8 +1,8 @@
-# Method 1 (analytic) species density and its uncertainty, Lake Michigan 2021 (user, 2026-10-24).
+# Method 1 (analytic) species density and its uncertainty, Lake Michigan, year YEAR (user, 2026-10-24).
 # - Acoustics: ship and saildrone POOLED; sampling unit = ship transect or saildrone drone-night, placed in a stratum
 #   by majority. Per interval, rho_layer = sum of fish_ha over its 1 m layers in the layer (by mid-depth); unit value
 #   = mean over its intervals; stratum rho = mean over units.
-# - Trawl: above 40 m by stratum (the year's tows); 40 m and deeper one lake-wide proportion (all 2021 deep tows).
+# - Trawl: above 40 m by stratum (the year's tows); 40 m and deeper one lake-wide proportion (all the year's deep tows).
 #   SE(p) above 40 m = sqrt(rho_od p(1-p)) / sqrt(stratum's tows), rho_od = pooled overdispersion (see trawl_cells);
 #   deep SE = SD of the deep tows / sqrt(their number).
 # - D = rho_upper p_upper + rho_lower p_deep. Var = acoustic + trawl + product (Goodman 1960); acoustic part from the
@@ -13,7 +13,7 @@ source("D:/pyprojects/cv_compare_acmt/R/trawl.R")
 
 # Acoustic value per unit x layer (fish/ha), pooled platforms
 acoustic_units <- function() {
-  bind_rows(read_acoustic("ships"), read_acoustic("saildrone")) %>%
+  bind_rows(lapply(PLATFORMS, read_acoustic)) %>%
     mutate(layer = layer_of((Layer_depth_min + Layer_depth_max) / 2)) %>%
     summarise(.by = c(platform, Region_name, stratum, Interval, layer), fish_ha = sum(fish_ha)) %>%
     complete(nesting(platform, Region_name, stratum, Interval), layer, fill = list(fish_ha = 0)) %>%

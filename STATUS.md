@@ -42,4 +42,13 @@
    ship + saildrone data): python/ (cvacmt package, run_method1.py, validate.py, README.md), conda env
    cv_compare_acmt (environment.yml). Matches R step 03 to ~1e-15 (areas ~2e-8: geometry library versions).
    python/make_figures.py draws the step 04-06 figures (matplotlib) to output/python/.
-8. Next: method 2 (bootstrap) on the pooled data.
+8. Year setting (2026-10-26): env var YEAR (default 2021) in R/paths.R and python/cvacmt/paths.py; outputs
+   <name>_<year>.csv/png. 2021 outputs byte-identical after the change; Python matches R for both years (2.4e-8).
+9. 2024 (user, 2026-10-26: option 1 = run as 2021, no borrowing; ~20-25 transects is typical effort, 2021 was
+   unusual). Ship transects only, 10 m layers. 24 transects: nn 8, no 3, sn 4, so 4, wn 5. Tows: 38, 33 used;
+   upper nn 9, no 2, sn 7, so 5, wn 6; deep 4 (2 nn, 2 no), all 100% bloater. fish_ha Inf (sigma = 0; 510 rows)
+   and NA (20) set to 0 (user, as EchoNet2Fish).
+   Lake-wide (fish/ha): alewife 669 (CV 31%; acoustic 39% / trawl 51% / product 9%), smelt 82 (CV 79%; 9 / 76 / 15),
+   bloater 709 (CV 27%; 29 / 60 / 11). vs 2021: CVs about double; trawl still the larger share.
+   Note: the 4 deep tows are all bloater, so SE(p_deep) = 0 and the deep layer adds no trawl variance in 2024.
+10. Next: method 2 (bootstrap) on the pooled data.

@@ -7,7 +7,7 @@ import argparse
 
 from cvacmt.estimate import acoustic_units, method1
 from cvacmt.figures import worked_example, shares_by_stratum, lake_density
-from cvacmt.paths import OUTPUT_DIR
+from cvacmt.paths import OUTPUT_DIR, out_name
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--worked", action="append", help="stratum:group, e.g. sn:bloater")
@@ -18,9 +18,9 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 r = method1(acoustic_units())
 for w in worked:
     s, g = w.split(":")
-    v = worked_example(s, g, OUTPUT_DIR / f"worked_{s}_{g}_2021.png")
+    v = worked_example(s, g, OUTPUT_DIR / out_name(f"worked_{s}_{g}", "png"))
     print(f"{s} {g}: D {v['D']:.1f}, var_ac {v['var_ac']:.0f}, var_tr {v['var_tr']:.0f}, var_x {v['var_x']:.0f}, "
           f"SE {v['se']:.1f}, CV {v['cv']:.3f}")
-shares_by_stratum(r["stratum"], r["lake"], OUTPUT_DIR / "shares_by_stratum_2021.png")
-lake_density(r["lake"], OUTPUT_DIR / "lake_density_2021.png")
+shares_by_stratum(r["stratum"], r["lake"], OUTPUT_DIR / out_name("shares_by_stratum", "png"))
+lake_density(r["lake"], OUTPUT_DIR / out_name("lake_density", "png"))
 print(f"Figures written to {OUTPUT_DIR}")

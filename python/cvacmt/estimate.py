@@ -1,9 +1,9 @@
-"""Method 1 (analytic) species density and its uncertainty, Lake Michigan 2021. Mirrors R/estimate.R.
+"""Method 1 (analytic) species density and its uncertainty, Lake Michigan, year YEAR. Mirrors R/estimate.R.
 
 - Acoustics: ship + saildrone POOLED; unit = transect or drone-night (majority stratum). Per interval, rho_layer =
   sum of fish_ha over its 1 m layers in the layer (by mid-depth); unit value = mean over intervals; stratum rho =
   mean over units.
-- Trawl: above 40 m by stratum; 40 m and deeper one lake-wide proportion (all 2021 deep tows). SE above 40 m =
+- Trawl: above 40 m by stratum; 40 m and deeper one lake-wide proportion (all the year's deep tows). SE above 40 m =
   sqrt(rho_od p(1 - p)) / sqrt(tows), rho_od a pooled overdispersion per species; deep SE = SD / sqrt(tows).
 - D = rho_upper p_upper + rho_lower p_deep; Var = acoustic + trawl + product (Goodman 1960).
 - Lake-wide mean density = sum(A D) / sum(A); the shared deep proportion's trawl variance enters fully correlated.
@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 from .data import read_acoustic
+from .paths import PLATFORMS
 from .strata import stratum_areas
 from .trawl import tow_props, layer_of, GROUPS, LAYERS
 
@@ -25,7 +26,7 @@ def _var_mean(x: pd.Series) -> float:
 
 def acoustic_units() -> pd.DataFrame:
     """Acoustic value per unit x layer (fish/ha), pooled platforms."""
-    d = pd.concat([read_acoustic("ships"), read_acoustic("saildrone")], ignore_index=True)
+    d = pd.concat([read_acoustic(p) for p in PLATFORMS], ignore_index=True)
     d["layer"] = layer_of((d["Layer_depth_min"] + d["Layer_depth_max"]) / 2)
     keys = ["platform", "Region_name", "stratum", "Interval"]
     s = (d.groupby(keys + ["layer"], dropna=False)["fish_ha"].sum()

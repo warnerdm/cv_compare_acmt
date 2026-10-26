@@ -12,7 +12,7 @@ LAYER_SPLIT_M <- 40
 layer_of <- function(depth) factor(if_else(depth < LAYER_SPLIT_M, "< 40 m", ">= 40 m"), c("< 40 m", ">= 40 m"))
 
 read_catch <- function() {
-  read_csv(file.path(TRAWL_DIR, "L_2_Y_2021_Acoustic_tr_catch.csv"), show_col_types = FALSE) %>%
+  read_csv(trawl_file("tr_catch"), show_col_types = FALSE) %>%
     transmute(OP_ID, SPECIES = as.integer(SPECIES), N = as.numeric(N))
 }
 

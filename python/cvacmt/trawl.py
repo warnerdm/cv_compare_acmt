@@ -4,7 +4,7 @@ fishing deeper than 40 m set to 0 (contamination); tows need >= 5 fish; layers s
 import numpy as np
 import pandas as pd
 
-from .paths import TRAWL_DIR
+from .paths import trawl_file
 from .data import read_tows
 
 GROUPS = {106: "alewife", 109: "smelt", 204: "bloater"}
@@ -19,7 +19,7 @@ def layer_of(depth) -> np.ndarray:
 
 
 def read_catch() -> pd.DataFrame:
-    return pd.read_csv(TRAWL_DIR / "L_2_Y_2021_Acoustic_tr_catch.csv")[["OP_ID", "SPECIES", "N"]]
+    return pd.read_csv(trawl_file("tr_catch"))[["OP_ID", "SPECIES", "N"]]
 
 
 def tow_catch(tows: pd.DataFrame | None = None) -> pd.DataFrame:

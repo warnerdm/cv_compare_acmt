@@ -8,6 +8,7 @@ import pandas as pd
 
 from .estimate import acoustic_units, trawl_cells
 from .trawl import tow_props, LAYERS
+from .paths import YEAR, ACOUSTIC_DESC
 
 GROUP_ORDER = ["alewife", "smelt", "bloater"]
 UNIT_ORDER = ["nn", "no", "wn", "sn", "so", "Lake-wide"]
@@ -46,7 +47,7 @@ def worked_example(stratum: str = "sn", group: str = "bloater", path=None) -> di
     aA.set_xlim(-0.5, len(LAYERS) + 0.3)
     aA.set(xlabel="Depth layer", ylabel="Fish/ha (all species)")
     aA.set_title("A. Acoustics: each point is one transect or drone-night\n"
-                 "rho = mean of units (ships + saildrones pooled); SE = SD / sqrt(units)", loc="left", fontsize=10)
+                 f"rho = mean of units ({ACOUSTIC_DESC}); SE = SD / sqrt(units)", loc="left", fontsize=10)
     aA.legend(frameon=False, loc="upper right")
 
     # B: tows (stratum above 40 m; all deep tows lake-wide)
@@ -65,8 +66,8 @@ def worked_example(stratum: str = "sn", group: str = "bloater", path=None) -> di
     aB.set_xlim(-0.5, len(LAYERS) + 0.6)
     aB.set_ylim(0, 1.05)
     aB.set(xlabel="Depth layer (tow fishing depth)", ylabel=f"Proportion {group}")
-    aB.set_title(f"B. Trawl: each point is one tow\nAbove 40 m: {stratum}'s 2021 tows; "
-                 "40 m and deeper: all 2021 deep tows (lake-wide)", loc="left", fontsize=10)
+    aB.set_title(f"B. Trawl: each point is one tow\nAbove 40 m: {stratum}'s {YEAR} tows; "
+                 f"40 m and deeper: all {YEAR} deep tows (lake-wide)", loc="left", fontsize=10)
 
     # C: unit species density with p fixed
     pl = tr["p"]
@@ -104,8 +105,8 @@ def worked_example(stratum: str = "sn", group: str = "bloater", path=None) -> di
     aD.text(0, -0.12, "Trawl bar = the proportion's variance converted to density units (x rho^2); "
             "product = both uncertainties together.", transform=aD.transAxes, fontsize=7)
 
-    fig.suptitle(f"Method 1 step by step: {group} in stratum {stratum}, Lake Michigan 2021 "
-                 "(ship + saildrone acoustics pooled)\n"
+    fig.suptitle(f"Method 1 step by step: {group} in stratum {stratum}, Lake Michigan {YEAR} "
+                 f"({ACOUSTIC_DESC})\n"
                  "Species density D = rho_upper x p_upper + rho_lower x p_deep (layers split at 40 m)", x=0.01, ha="left")
     fig.tight_layout()
     if path is not None:
@@ -134,10 +135,10 @@ def shares_by_stratum(stratum: pd.DataFrame, lake: pd.DataFrame, path=None):
     axs[0].set_ylabel("Share of the variance of species density")
     h, l = axs[0].get_legend_handles_labels()
     fig.legend(h, l, title="Source", loc="lower center", ncol=3, frameon=False, bbox_to_anchor=(0.5, 0.06))
-    fig.suptitle("Lake Michigan 2021: where the uncertainty in species density comes from, by stratum\n"
+    fig.suptitle(f"Lake Michigan {YEAR}: where the uncertainty in species density comes from, by stratum\n"
                  "Relative contribution of each gear to the variance of each species' density (bars sum to 1). "
                  "Label = CV, for context.", x=0.01, ha="left", fontsize=10)
-    fig.text(0.01, 0.01, "Ship + saildrone acoustics pooled; trawl by stratum above 40 m, lake-wide below. "
+    fig.text(0.01, 0.01, ACOUSTIC_DESC[0].upper() + ACOUSTIC_DESC[1:] + "; trawl by stratum above 40 m, lake-wide below. "
              "Large CVs = species nearly absent from that stratum.", fontsize=8)
     fig.tight_layout(rect=(0, 0.12, 1, 1))
     if path is not None:
@@ -160,10 +161,10 @@ def lake_density(lake: pd.DataFrame, path=None):
     ax.set_xticks(range(len(lk)), GROUP_ORDER)
     ax.set_ylim(0, (lk["density"] + 1.96 * lk["se_density"]).max() * 1.15)
     ax.set_ylabel("Lake-wide mean density (fish/ha)")
-    ax.set_title("Lake Michigan 2021: lake-wide mean density by species\n"
+    ax.set_title(f"Lake Michigan {YEAR}: lake-wide mean density by species\n"
                  "Thick bar = +-1 SE; thin bar = approximate 95% interval (+-1.96 SE).\n"
                  "Method 1: acoustic + trawl uncertainty combined.", loc="left", fontsize=10)
-    fig.text(0.01, 0.01, "Ship + saildrone acoustics pooled; area-weighted over the five strata. All sizes, by number.",
+    fig.text(0.01, 0.01, ACOUSTIC_DESC[0].upper() + ACOUSTIC_DESC[1:] + "; area-weighted over the five strata. All sizes, by number.",
              fontsize=8)
     fig.tight_layout(rect=(0, 0.03, 1, 1))
     if path is not None:
