@@ -12,7 +12,7 @@ product variance, by stratum and lake-wide). See `../docs/METHODS.md` for the me
 | `cvacmt/data.py` | `R/data.R` | `read_acoustic(platform)`, `read_tows` |
 | `cvacmt/trawl.py` | `R/trawl.R` | `tow_catch`, `tow_props` (trawl rules) |
 | `cvacmt/estimate.py` | `R/estimate.R` | `acoustic_units`, `trawl_cells`, `method1` |
-| `cvacmt/figures.py` | `analysis/04-07` | `worked_example`, `shares_by_stratum`, `lake_density`, `lake_shares_years` (matplotlib) |
+| `cvacmt/figures.py` | `analysis/04-08` | `worked_example`, `shares_by_stratum`, `lake_density`, `lake_shares_years`, `lake_density_years` (matplotlib) |
 
 ## Run
 

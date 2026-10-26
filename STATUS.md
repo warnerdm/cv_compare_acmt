@@ -80,4 +80,5 @@
    13 years (<= 5e-8). Figure: output/lake_shares_2011_2024.png (step 07).
    Pattern: alewife acoustic-dominated in most years (42-86%); smelt trawl-dominated except 2011 (acoustic 56%);
    bloater varies year to year. Bloater nearly absent 2011-2014 (7-126/ha; 3 fish in all 2013 tows).
-14. Next: method 2 (bootstrap) on the pooled data.
+14. Lake-wide density across years with +-1 SE and ~95% bars (step 08): output/lake_density_2011_2024.png.
+15. Next: method 2 (bootstrap) on the pooled data.

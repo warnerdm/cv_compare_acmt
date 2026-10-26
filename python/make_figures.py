@@ -6,7 +6,7 @@
 import argparse
 
 from cvacmt.estimate import acoustic_units, method1
-from cvacmt.figures import worked_example, shares_by_stratum, lake_density, lake_shares_years
+from cvacmt.figures import worked_example, shares_by_stratum, lake_density, lake_shares_years, lake_density_years
 from cvacmt.paths import OUTPUT_DIR, out_name
 
 ap = argparse.ArgumentParser()
@@ -24,4 +24,5 @@ for w in worked:
 shares_by_stratum(r["stratum"], r["lake"], OUTPUT_DIR / out_name("shares_by_stratum", "png"))
 lake_density(r["lake"], OUTPUT_DIR / out_name("lake_density", "png"))
 lake_shares_years(OUTPUT_DIR / "lake_shares_years.png")  # all years with output/python/method1_lake_<year>.csv
+lake_density_years(OUTPUT_DIR / "lake_density_years.png")
 print(f"Figures written to {OUTPUT_DIR}")

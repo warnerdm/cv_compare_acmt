@@ -209,3 +209,39 @@ def lake_shares_years(path=None) -> pd.DataFrame:
         fig.savefig(path, dpi=150)
     plt.close(fig)
     return d
+
+
+def lake_density_years(path=None) -> pd.DataFrame:
+    """Lake-wide mean density per species across years (R step 08): thick bar +-1 SE, thin bar ~95% (+-1.96 SE,
+    truncated at 0), label = CV. Reads output/python/method1_lake_<year>.csv of every year that has one."""
+    from .paths import ACOUSTIC_FILES, OUTPUT_DIR
+    years = [y for y in sorted(ACOUSTIC_FILES) if (OUTPUT_DIR / f"method1_lake_{y}.csv").exists()]
+    d = pd.concat([pd.read_csv(OUTPUT_DIR / f"method1_lake_{y}.csv").assign(year=y) for y in years], ignore_index=True)
+    cols = {"alewife": "magenta", "smelt": "grey", "bloater": "0.15"}
+    fig, axs = plt.subplots(len(GROUP_ORDER), 1, figsize=(10, 9), sharex=True)
+    for ax, g in zip(axs, GROUP_ORDER):
+        s = d[d["group"] == g].sort_values("year")
+        lo = np.maximum(0, s["density"] - 1.96 * s["se_density"])
+        hi = s["density"] + 1.96 * s["se_density"]
+        ax.bar(s["year"], s["density"], 0.7, color=cols[g], alpha=0.45)
+        ax.errorbar(s["year"], s["density"], yerr=[s["density"] - lo, hi - s["density"]], fmt="none", color="black",
+                    capsize=4, linewidth=0.7)
+        ax.errorbar(s["year"], s["density"], yerr=[s["density"] - np.maximum(0, s["density"] - s["se_density"]),
+                    s["se_density"]], fmt="none", color="black", capsize=0, linewidth=2.5)
+        for x, h, cv in zip(s["year"], hi, s["cv"]):
+            ax.text(x, h, f"{100 * cv:.0f}%", ha="center", va="bottom", fontsize=7)
+        ax.set_ylim(0, hi.max() * 1.15)
+        ax.set_title(g, fontsize=10, backgroundcolor="0.92")
+    axs[-1].set_xticks(years, [str(y) for y in years], fontsize=8)
+    axs[1].set_ylabel("Lake-wide mean density (fish/ha)")
+    fig.suptitle(f"Lake Michigan {min(years)}-{max(years)}: lake-wide mean density by species\n"
+                 "Thick bar = +-1 SE; thin bar = approximate 95% interval (+-1.96 SE, truncated at 0). Label = CV.",
+                 x=0.01, ha="left", fontsize=10)
+    fig.text(0.01, 0.01, "Area-weighted over the five strata; all sizes, by number. Acoustics: 2021 ship + saildrone, "
+             f"other years ship transects. No survey in 2020.\nTrawl spread pooled over {min(TRAWL_YEARS)}-"
+             f"{max(TRAWL_YEARS)}; deep proportion from all years' deep tows.", fontsize=8)
+    fig.tight_layout(rect=(0, 0.05, 1, 1))
+    if path is not None:
+        fig.savefig(path, dpi=150)
+    plt.close(fig)
+    return d
