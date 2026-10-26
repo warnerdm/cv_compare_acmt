@@ -11,6 +11,8 @@ YEAR = int(os.environ.get("YEAR", "2021"))
 ACOUSTIC_FILES = {
     2021: {"ships": "L2 Y2021 estimates ships intlaymeans_nph 2026-07-23.csv",
            "saildrone": "L2 Y2021 estimates sd intlaymeans_nph 2025-03-07.csv"},
+    2022: {"ships": "L2 Y2022 ACMT Estimates 60db2023-02-23 intlaymeans_nph 2023-02-23.csv"},
+    2023: {"ships": "L2 Y2023 ACMT Estimates with alewife age2024-03-08 intlaymeans_nph 2024-03-08.csv"},
     2024: {"ships": "L2 Y2024 ACMT Estimates2025-01-17 intlaymeans_nph 2025-01-17.csv"},
 }
 ACOUSTIC = {k: DATA_DIR / "acoustic" / v for k, v in ACOUSTIC_FILES[YEAR].items()}

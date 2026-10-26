@@ -7,6 +7,8 @@ YEAR        <- as.integer(Sys.getenv("YEAR", "2021"))
 ACOUSTIC_FILES <- list(
   `2021` = c(ships     = "L2 Y2021 estimates ships intlaymeans_nph 2026-07-23.csv",
              saildrone = "L2 Y2021 estimates sd intlaymeans_nph 2025-03-07.csv"),
+  `2022` = c(ships     = "L2 Y2022 ACMT Estimates 60db2023-02-23 intlaymeans_nph 2023-02-23.csv"),
+  `2023` = c(ships     = "L2 Y2023 ACMT Estimates with alewife age2024-03-08 intlaymeans_nph 2024-03-08.csv"),
   `2024` = c(ships     = "L2 Y2024 ACMT Estimates2025-01-17 intlaymeans_nph 2025-01-17.csv"))
 stopifnot(as.character(YEAR) %in% names(ACOUSTIC_FILES))
 ACOUSTIC    <- setNames(file.path(DATA_DIR, "acoustic", ACOUSTIC_FILES[[as.character(YEAR)]]),

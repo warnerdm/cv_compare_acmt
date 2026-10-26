@@ -51,4 +51,14 @@
    Lake-wide (fish/ha): alewife 669 (CV 31%; acoustic 39% / trawl 51% / product 9%), smelt 82 (CV 79%; 9 / 76 / 15),
    bloater 709 (CV 27%; 29 / 60 / 11). vs 2021: CVs about double; trawl still the larger share.
    Note: the 4 deep tows are all bloater, so SE(p_deep) = 0 and the deep layer adds no trawl variance in 2024.
-10. Next: method 2 (bootstrap) on the pooled data.
+10. 2022 and 2023 (user, 2026-10-26; run as 2024). Ship transects only; 2022 10 m layers, 2023 5 m (all break at 40 m).
+   fish_ha Inf/NA set to 0 (2022: 1,054 / 121 rows; 2023: 2,438 / 314). Python matches R (2022 5e-8, 2023 2e-8).
+   2022: 26 transects (nn 6, no 3, sn 8, so 6, wn 3); 37 tows, 31 used; upper nn 10, no 3, sn 6, so 1, wn 3; deep 8.
+     Lake-wide: alewife 193 (CV 24%; acoustic 69% / trawl 26%), smelt 51 (CV 44%; 19 / 74), bloater 154 (CV 30%; 87 / 9).
+     so upper has ONE tow (0 alewife), so so alewife D = 0 with no variance; wn upper bloater p = 0 -> trawl share 0.
+   2023: 20 transects (nn 6, no 4, sn 4, so 3, wn 3); 29 tows, 24 used; upper nn 7, no 4, sn 4, so 3, wn 4; deep 2.
+     Lake-wide: alewife 1,480 (CV 38%; 80 / 13), smelt 377 (CV 50%; 34 / 45), bloater 382 (CV 72%; 34 / 41).
+   Worked examples: 2022 sn bloater (acoustic 97%), 2023 nn alewife (acoustic 86%), 2024 sn bloater.
+   Every year 2022-2024 the deep tows are all bloater, so SE(p_deep) = 0 (no deep trawl variance).
+   A species with stratum p = 0 or 1 gets trawl SE 0 under p(1-p) scaling (few tows make this common).
+11. Next: method 2 (bootstrap) on the pooled data.

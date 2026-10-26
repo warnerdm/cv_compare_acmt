@@ -33,7 +33,7 @@ the methods (keep it in step with the code).
   the 2021 ship + saildrone data): conda env `cv_compare_acmt` (`environment.yml`; geopandas, pyproj), run from
   `python/`. `python/validate.py` must match the R output (step 03); keep both versions in step when the method
   changes. Call `C:\Users\dmwar\miniconda3\envs\cv_compare_acmt\python.exe` with the env's DLL folders on PATH.
-- Survey year (2026-10-26): env var `YEAR` (default 2021; also 2024), read in `R/paths.R` / `python/cvacmt/paths.py`
+- Survey year (2026-10-26): env var `YEAR` (default 2021; also 2022, 2023, 2024), read in `R/paths.R` / `python/cvacmt/paths.py`
   (`ACOUSTIC_FILES` lists each year's acoustic files by platform). E.g. `YEAR=2024 Rscript run_all.R`.
   fish_ha Inf (sigma = 0) or NA = 0, as EchoNet2Fish (user, 2026-10-26).
 - Code in `R/` (functions); `analysis/` numbered scripts that call them; results in `output/` (git-ignored).
