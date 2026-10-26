@@ -41,7 +41,7 @@ pB <- ggplot(B, aes(layer, p)) +
   geom_text(data = trB, aes(y = p, label = label), position = position_nudge(x = 0.45), hjust = 0, size = 3) +
   scale_y_continuous(limits = c(0, 1.05)) + scale_x_discrete(expand = expansion(add = c(0.5, 1.6))) +
   labs(x = "Depth layer (tow fishing depth)", y = paste("Proportion", GROUP), title = "B. Trawl: each point is one tow",
-       subtitle = sprintf("Above 40 m: %s's %d tows (SD pooled over %d-%d); 40 m and deeper: all %d-%d deep tows (lake-wide)",
+       subtitle = sprintf("< 40 m: %s's %d tows, SD pooled %d-%d; >= 40 m: all %d-%d deep tows, lake-wide",
                           STRATUM, YEAR, min(TRAWL_YEARS), max(TRAWL_YEARS), min(TRAWL_YEARS), max(TRAWL_YEARS))) +
   theme_bw(base_size = 10)
 

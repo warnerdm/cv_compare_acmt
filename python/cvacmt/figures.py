@@ -68,8 +68,8 @@ def worked_example(stratum: str = "sn", group: str = "bloater", path=None) -> di
     aB.set_ylim(0, 1.05)
     aB.set(xlabel="Depth layer (tow fishing depth)", ylabel=f"Proportion {group}")
     y0, y1 = min(TRAWL_YEARS), max(TRAWL_YEARS)
-    aB.set_title(f"B. Trawl: each point is one tow\nAbove 40 m: {stratum}'s {YEAR} tows (SD pooled over {y0}-{y1}); "
-                 f"40 m and deeper: all {y0}-{y1} deep tows (lake-wide)", loc="left", fontsize=10)
+    aB.set_title(f"B. Trawl: each point is one tow\n< 40 m: {stratum}'s {YEAR} tows, SD pooled {y0}-{y1}; "
+                 f">= 40 m: all {y0}-{y1} deep tows, lake-wide", loc="left", fontsize=10)
 
     # C: unit species density with p fixed
     pl = tr["p"]
