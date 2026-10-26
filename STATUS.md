@@ -81,4 +81,9 @@
    Pattern: alewife acoustic-dominated in most years (42-86%); smelt trawl-dominated except 2011 (acoustic 56%);
    bloater varies year to year. Bloater nearly absent 2011-2014 (7-126/ha; 3 fish in all 2013 tows).
 14. Lake-wide density across years with +-1 SE and ~95% bars (step 08): output/lake_density_2011_2024.png.
-15. Next: method 2 (bootstrap) on the pooled data.
+15. 2021 by platform (user, 2026-10-26: "does each platform alone give the same shares?"): env var PLATFORM =
+   ships / saildrone (empty = pooled); outputs *_2021_ships / *_2021_saildrone. Python matches R.
+   Lake-wide CV (acoustic share) pooled / ships (35 transects) / saildrone (68 drone-nights): alewife 13 (54) / 13 (57) /
+   14 (62); smelt 53 (9) / 47 (8) / 55 (18); bloater 18 (23) / 22 (60) / 18 (29). Saildrone densities higher than ship
+   in every stratum and species (lake-wide alewife 1,615 vs 1,055; bloater 829 vs 590; smelt 167 vs 114).
+16. Next: method 2 (bootstrap) on the pooled data.

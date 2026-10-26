@@ -25,6 +25,12 @@ ACOUSTIC_FILES = {
     2024: {"ships": "L2 Y2024 ACMT Estimates2025-01-17 intlaymeans_nph 2025-01-17.csv"},
 }
 ACOUSTIC = {k: DATA_DIR / "acoustic" / v for k, v in ACOUSTIC_FILES[YEAR].items()}
+# Optional single platform (env var PLATFORM = ships or saildrone; empty = all pooled, the default). 2026-10-26: user
+# asked to compare ship-only and saildrone-only 2021 estimates with the pooled one; outputs tagged _<year>_<platform>.
+PLATFORM = os.environ.get("PLATFORM", "")
+if PLATFORM:
+    ACOUSTIC = {PLATFORM: ACOUSTIC[PLATFORM]}
+RUN_TAG = f"{YEAR}_{PLATFORM}" if PLATFORM else str(YEAR)
 PLATFORMS = list(ACOUSTIC)
 ACOUSTIC_DESC = ("ship + saildrone acoustics pooled" if len(PLATFORMS) > 1
                  else f"{PLATFORMS[0].removesuffix('s')} acoustics only")
@@ -44,7 +50,7 @@ TRAWL_YEARS = sorted(int(f.name[6:10]) for f in TRAWL_DIR.glob("L_2_Y_[0-9][0-9]
 
 
 def out_name(stem: str, ext: str = "csv") -> str:
-    return f"{stem}_{YEAR}.{ext}"
+    return f"{stem}_{RUN_TAG}.{ext}"
 
 
 # GDAL data for pyogrio inside the conda environment (silences a harmless warning)

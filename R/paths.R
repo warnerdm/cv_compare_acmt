@@ -22,6 +22,14 @@ ACOUSTIC_FILES <- list(
 stopifnot(as.character(YEAR) %in% names(ACOUSTIC_FILES))
 ACOUSTIC    <- setNames(file.path(DATA_DIR, "acoustic", ACOUSTIC_FILES[[as.character(YEAR)]]),
                         names(ACOUSTIC_FILES[[as.character(YEAR)]]))
+# Optional single platform (env var PLATFORM = ships or saildrone; empty = all pooled, the default). 2026-10-26: user
+# asked to compare ship-only and saildrone-only 2021 estimates with the pooled one; outputs tagged _<year>_<platform>.
+PLATFORM    <- Sys.getenv("PLATFORM", "")
+if (nzchar(PLATFORM)) {
+  stopifnot(PLATFORM %in% names(ACOUSTIC))
+  ACOUSTIC <- ACOUSTIC[PLATFORM]
+}
+RUN_TAG     <- if (nzchar(PLATFORM)) paste0(YEAR, "_", PLATFORM) else as.character(YEAR)
 PLATFORMS   <- names(ACOUSTIC)
 ACOUSTIC_DESC <- if (length(PLATFORMS) > 1) "ship + saildrone acoustics pooled" else paste(sub("s$", "", PLATFORMS), "acoustics only")
 TRAWL_DIR   <- file.path(DATA_DIR, "trawl")
@@ -32,5 +40,5 @@ TRAWL_YEARS <- sort(as.integer(sub("^L_2_Y_([0-9]{4})_Acoustic_optrop[.]csv$", "
   list.files(TRAWL_DIR, "^L_2_Y_[0-9]{4}_Acoustic_optrop[.]csv$"))))
 STRATA_SHP  <- file.path(DATA_DIR, "gis", "final_five_strata_new.shp")
 OUTPUT_DIR  <- file.path(ROOT, "output")
-out_file    <- function(stem, ext = "csv") file.path(OUTPUT_DIR, sprintf("%s_%d.%s", stem, YEAR, ext))
+out_file    <- function(stem, ext = "csv") file.path(OUTPUT_DIR, sprintf("%s_%s.%s", stem, RUN_TAG, ext))
 AREA_CRS    <- 3175   # NAD83 / Great Lakes Albers (equal area) for stratum areas
