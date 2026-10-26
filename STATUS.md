@@ -71,4 +71,6 @@
    2024 31->27 (51%), 79->97 (5%), 27->22 (45%).
    A stratum where a species is near 0 in the year now gets the stratum's typical SD -> very large stratum CVs
    (e.g. 2021 so smelt 2,838%); 2022 so alewife D = 0 with SE > 0 (CV Inf).
-12. Next: method 2 (bootstrap) on the pooled data.
+12. Lake-wide shares across years (step 07, analysis/07_lake_shares_years.R; Python figures.lake_shares_years):
+   output/lake_shares_2021_2024.png. Reads method1_lake_<year>.csv of every year run.
+13. Next: method 2 (bootstrap) on the pooled data.
