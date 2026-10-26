@@ -5,7 +5,7 @@ Builds on trawlcomp's first attempt (`D:\pyprojects\trawlcomp\docs\TWO_GEAR_METH
 
 ## Data and strata
 
-- **Year:** set by env var `YEAR` (2021, 2022, 2023, 2024; default 2021).
+- **Year:** set by env var `YEAR` (2011-2019, 2021-2024; no survey in 2020; default 2021).
 - **Acoustics:** EchoNet2Fish interval x layer output (`fish_ha`, sigma from in-situ TS; 1 m layers in 2021, 10 m in
   2022 and 2024, 5 m in 2023). 2021: ship transects and saildrone drone-nights **pooled** into one data set; 2022-2024:
   ship transects only (20-26, typical effort). Each ship transect and each drone-night is one sampling unit.
@@ -38,7 +38,11 @@ Builds on trawlcomp's first attempt (`D:\pyprojects\trawlcomp\docs\TWO_GEAR_METH
     stratum mean (so between-year change in composition does not enter). tows = the year's tows in the stratum.
     Replaces the 2021 within-year pooled overdispersion (rho_od x p(1 - p)), which gave SE = 0 when a stratum's tows
     that year were all 0 or all 1 for a species.
-  - Deep: SD of all pooled deep tows; tows = their number (57).
+  - Deep: SD of all pooled deep tows; tows = their number.
+  - A stratum with no upper-layer tow (>= 5 fish) in a year (so in 2013 and 2014) takes p from the year's upper tows
+    in its half of the lake (north = nn + no; south = sn + so + wn, trawlcomp's rule; user 2026-10-26):
+    Var(p) = sum_k n_k SD_k^2 / N^2 over the donor strata k (N = donor tows). Because the tows are shared, the
+    lake-wide total adds 2 A_b rho_b A_k rho_k SD_k^2 / N for each donor k.
   Var_tr = rho_upper^2 SE(p_upper)^2 + rho_lower^2 SE(p_deep)^2.
 - **Product:** Var(rho_upper) SE(p_upper)^2 + Var(rho_lower) SE(p_deep)^2.
 - **Var(D_s) = Var_ac + Var_tr + product** (Goodman 1960). The shares of the three terms show which gear drives the

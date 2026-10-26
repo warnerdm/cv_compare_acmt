@@ -73,4 +73,11 @@
    (e.g. 2021 so smelt 2,838%); 2022 so alewife D = 0 with SE > 0 (CV Inf).
 12. Lake-wide shares across years (step 07, analysis/07_lake_shares_years.R; Python figures.lake_shares_years):
    output/lake_shares_2021_2024.png. Reads method1_lake_<year>.csv of every year run.
-13. Next: method 2 (bootstrap) on the pooled data.
+13. 2011-2019 added (user, 2026-10-26; sizes skipped for now: small/large bloater likely later, as in the survey
+   products 106.L0/L100, 109.L0/L90, 204.L0/L120 (2021 file: 204.L100)). 13 years run, ship transects only except
+   2021 (20-29 transects). so has no upper tow with >= 5 fish in 2013 (2 tows, 1 fish) and 2014 (1 tow, 2 fish):
+   south half (sn + wn) tows used (user), with the donor covariance in the lake-wide total. Python matches R, all
+   13 years (<= 5e-8). Figure: output/lake_shares_2011_2024.png (step 07).
+   Pattern: alewife acoustic-dominated in most years (42-86%); smelt trawl-dominated except 2011 (acoustic 56%);
+   bloater varies year to year. Bloater nearly absent 2011-2014 (7-126/ha; 3 fish in all 2013 tows).
+14. Next: method 2 (bootstrap) on the pooled data.

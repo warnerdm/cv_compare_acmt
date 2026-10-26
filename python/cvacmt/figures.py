@@ -188,22 +188,23 @@ def lake_shares_years(path=None) -> pd.DataFrame:
             ax.bar(range(len(s)), s["share_" + src], 0.7, bottom=bottom, color=SOURCE_COLOURS[src], label=src)
             bottom += s["share_" + src].to_numpy()
         for i, (cv, dens) in enumerate(zip(s["cv"], s["density"])):
-            ax.text(i, 1.05, f"CV {100 * cv:.0f}%\n{dens:.0f}/ha", ha="center", va="bottom", fontsize=8)
+            ax.text(i, 1.04, f"CV {100 * cv:.0f}%\n{dens:.0f}/ha", ha="center", va="bottom", fontsize=7)
         labs = [f"{y}\n{'ship + saildrone' if len(ACOUSTIC_FILES[y]) > 1 else 'ship'}" for y in years]
         ax.set_xticks(range(len(s)), labs, fontsize=8)
         ax.set_title(g, fontsize=10, backgroundcolor="0.92")
-        ax.set_ylim(0, 1.2)
+        ax.set_ylim(0, 1.28)
         ax.set_yticks([0, 0.5, 1])
-    axs[0].set_ylabel("Share of the variance of lake-wide density")
+    axs[1].set_ylabel("Share of the variance of lake-wide density")
     h, l = axs[0].get_legend_handles_labels()
-    fig.legend(h, l, title="Source", loc="lower center", ncol=3, frameon=False, bbox_to_anchor=(0.5, 0.08))
+    fig.legend(h, l, title="Source", loc="lower center", ncol=3, frameon=False, bbox_to_anchor=(0.5, 0.045))
     fig.suptitle(f"Lake Michigan {min(years)}-{max(years)}: where the uncertainty in lake-wide species density comes from\n"
                  "Relative contribution of each gear (bars sum to 1). Label = CV and lake-wide mean density, for context.",
                  x=0.01, ha="left", fontsize=10)
     fig.text(0.01, 0.01, "Acoustic units per year: 2021 ship transects + saildrone drone-nights (103); other years ship "
-             f"transects only (20-26).\nTrawl: each year's stratum proportions above 40 m with the between-tow SD pooled "
-             f"over {min(TRAWL_YEARS)}-{max(TRAWL_YEARS)}; deep proportion from all years' deep tows.", fontsize=8)
-    fig.tight_layout(rect=(0, 0.16, 1, 1))
+             f"transects only (20-29). No survey in 2020.\nTrawl: each year's stratum proportions above 40 m with the between-tow SD pooled "
+             f"over {min(TRAWL_YEARS)}-{max(TRAWL_YEARS)}; deep proportion from all years' deep tows. so 2013-2014: no upper "
+             "tows, south half (sn + wn) used.", fontsize=8)
+    fig.tight_layout(rect=(0, 0.1, 1, 1))
     if path is not None:
         fig.savefig(path, dpi=150)
     plt.close(fig)
