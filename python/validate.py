@@ -9,7 +9,7 @@ R_DIR = ROOT / "output"
 CHECKS = [
     ("method1_stratum", ["stratum", "group"], ["units", "D", "var_ac", "var_tr", "var_x", "se_D", "cv_D", "area_ha"]),
     ("method1_lake", ["group"], ["density", "se_density", "cv", "share_acoustic", "share_trawl", "share_product", "N"]),
-    ("method1_trawl", ["stratum", "layer", "group"], ["tows", "p", "sd", "se_p"]),
+    ("method1_trawl", ["stratum", "layer", "group"], ["tows", "p", "sd", "se_p", "df", "years"]),
     ("method1_acoustic", ["stratum", "layer"], ["units", "rho", "var_rho"]),
 ]
 

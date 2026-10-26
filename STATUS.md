@@ -61,4 +61,14 @@
    Worked examples: 2022 sn bloater (acoustic 97%), 2023 nn alewife (acoustic 86%), 2024 sn bloater.
    Every year 2022-2024 the deep tows are all bloater, so SE(p_deep) = 0 (no deep trawl variance).
    A species with stratum p = 0 or 1 gets trawl SE 0 under p(1-p) scaling (few tows make this common).
-11. Next: method 2 (bootstrap) on the pooled data.
+11. Trawl pooled across years (user, 2026-10-26; replaces within-year rho_od): upper SD = stratum's pooled within-year
+   SD over all years in data/trawl (2011-2019, 2021-2024; df 32-102 per stratum), SE = SD / sqrt(the year's tows);
+   deep p and SD from all 57 deep tows (12 years; bloater 0.951, smelt 0.049, SE 0.023). All 4 years rerun; Python
+   matches R (<= 5e-8). 11 tows have FISHING_DEPTH 0 (surface tows; kept). Query: 2015 tow 92795 (so2, 112 m water,
+   111 bloater + 43 alewife at "0 m") may be a missing depth.
+   Lake-wide CV year-only -> pooled (acoustic share pooled): 2021 alewife 13->13 (54%), smelt 37->53 (9%), bloater
+   17->18 (23%); 2022 23->23 (74%), 44->37 (23%), 30->29 (88%); 2023 38->37 (86%), 50->46 (40%), 72->64 (44%);
+   2024 31->27 (51%), 79->97 (5%), 27->22 (45%).
+   A stratum where a species is near 0 in the year now gets the stratum's typical SD -> very large stratum CVs
+   (e.g. 2021 so smelt 2,838%); 2022 so alewife D = 0 with SE > 0 (CV Inf).
+12. Next: method 2 (bootstrap) on the pooled data.

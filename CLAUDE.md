@@ -17,7 +17,7 @@ the methods (keep it in step with the code).
   The files' `region` column merges nn into no; do not use it for strata.
 - 2024 (user, 2026-10-26): acoustic `L2 Y2024 ACMT Estimates2025-01-17 intlaymeans_nph 2025-01-17.csv` (ships only,
   10 m layers, 24 transects); trawl `L_2_Y_2024_Acoustic_*` (38 tows).
-- trawl/: L_2_Y_2021_Acoustic_{optrop,tr_catch,tr_lf}.csv, 67 tows = bloaterTS's 41 + 25 TARGET 119 survey-time
+- trawl/: L_2_Y_<year>_Acoustic_{optrop,tr_catch[,tr_lf]}.csv for 2011-2019, 2021-2024 (user, 2026-10-26). 2021: 67 tows = bloaterTS's 41 + 25 TARGET 119 survey-time
   tows + 119411 (excluded, experimental; R/data.R EXCLUDED_TOWS).
 - gis/: final_five_strata_new.shp, the five original strata nn, no, sn, so, wn (WGS 84).
 - Paths are set once in `R/paths.R`.
@@ -36,6 +36,8 @@ the methods (keep it in step with the code).
 - Survey year (2026-10-26): env var `YEAR` (default 2021; also 2022, 2023, 2024), read in `R/paths.R` / `python/cvacmt/paths.py`
   (`ACOUSTIC_FILES` lists each year's acoustic files by platform). E.g. `YEAR=2024 Rscript run_all.R`.
   fish_ha Inf (sigma = 0) or NA = 0, as EchoNet2Fish (user, 2026-10-26).
+- Trawl pooling (user, 2026-10-26): every year with an optrop file in data/trawl (TRAWL_YEARS) feeds the upper-layer
+  pooled within-year SD and the deep p/SD. Adding or removing trawl files changes every year's results.
 - Code in `R/` (functions); `analysis/` numbered scripts that call them; results in `output/` (git-ignored).
   `run_all.R` runs the scripts in order.
 

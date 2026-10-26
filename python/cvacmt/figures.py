@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 
 from .estimate import acoustic_units, trawl_cells
-from .trawl import tow_props, LAYERS
-from .paths import YEAR, ACOUSTIC_DESC
+from .trawl import tow_props, tow_props_all, LAYERS
+from .paths import YEAR, ACOUSTIC_DESC, TRAWL_YEARS
 
 GROUP_ORDER = ["alewife", "smelt", "bloater"]
 UNIT_ORDER = ["nn", "no", "wn", "sn", "so", "Lake-wide"]
@@ -25,10 +25,9 @@ def worked_example(stratum: str = "sn", group: str = "bloater", path=None) -> di
     """Method 1 step by step for one stratum and species (R step 04). Returns the numbers drawn."""
     au = acoustic_units()
     au = au[au["stratum"] == stratum]
-    tp = tow_props()
-    tr = trawl_cells(tp)
+    tp, tp_all = tow_props(), tow_props_all()
+    tr = trawl_cells(tp, tp_all)
     tr = tr[(tr["stratum"] == stratum) & (tr["group"] == group)].set_index("layer").reindex(LAYERS)
-    rho_od = tr["rho_od"].dropna().iloc[0]
     x = {lv: i for i, lv in enumerate(LAYERS)}
 
     fig, axs = plt.subplots(2, 2, figsize=(14, 9))
@@ -50,24 +49,27 @@ def worked_example(stratum: str = "sn", group: str = "bloater", path=None) -> di
                  f"rho = mean of units ({ACOUSTIC_DESC}); SE = SD / sqrt(units)", loc="left", fontsize=10)
     aA.legend(frameon=False, loc="upper right")
 
-    # B: tows (stratum above 40 m; all deep tows lake-wide)
-    B = tp[((tp["layer"] == LAYERS[0]) & (tp["stratum"] == stratum)) | (tp["layer"] == LAYERS[1])]
+    # B: tows (the stratum's tows this year above 40 m; all pooled years' deep tows lake-wide)
+    B = pd.concat([tp[(tp["layer"] == LAYERS[0]) & (tp["stratum"] == stratum)], tp_all[tp_all["layer"] == LAYERS[1]]])
     aB.scatter(B["layer"].map(x) + _jitter(len(B), 0.1), B["p_" + group], c="darkorange", alpha=0.8, s=20)
     for lv, r in tr.iterrows():
         lo, hi = max(0, r["p"] - r["se_p"]), min(1, r["p"] + r["se_p"])
         aB.errorbar(x[lv] + 0.28, r["p"], yerr=[[r["p"] - lo], [hi - r["p"]]], fmt="o", color="black", capsize=0)
         if lv == LAYERS[0]:
-            lab = (f"p = {r['p']:.2f}\nSD = sqrt({rho_od:.2f} x p(1-p)) = {r['sd']:.2f}\n"
+            lab = (f"p = {r['p']:.2f} ({int(r['tows'])} tows)\nSD = {r['sd']:.2f}: pooled within-year,\n"
+                   f"  {int(r['years'])} years, df {int(r['df'])}\n"
                    f"SE = {r['sd']:.2f} / sqrt({int(r['tows'])}) = {r['se_p']:.2f}")
         else:
-            lab = f"p = {r['p']:.2f} (lake-wide)\nSE = {r['sd']:.2f} / sqrt({int(r['tows'])}) = {r['se_p']:.2f}"
+            lab = (f"p = {r['p']:.2f} (all years, lake-wide)\n"
+                   f"SE = {r['sd']:.2f} / sqrt({int(r['tows'])}) = {r['se_p']:.2f}")
         aB.text(x[lv] + 0.45, r["p"], lab, va="center", fontsize=8)
     aB.set_xticks(range(len(LAYERS)), LAYERS)
     aB.set_xlim(-0.5, len(LAYERS) + 0.6)
     aB.set_ylim(0, 1.05)
     aB.set(xlabel="Depth layer (tow fishing depth)", ylabel=f"Proportion {group}")
-    aB.set_title(f"B. Trawl: each point is one tow\nAbove 40 m: {stratum}'s {YEAR} tows; "
-                 f"40 m and deeper: all {YEAR} deep tows (lake-wide)", loc="left", fontsize=10)
+    y0, y1 = min(TRAWL_YEARS), max(TRAWL_YEARS)
+    aB.set_title(f"B. Trawl: each point is one tow\nAbove 40 m: {stratum}'s {YEAR} tows (SD pooled over {y0}-{y1}); "
+                 f"40 m and deeper: all {y0}-{y1} deep tows (lake-wide)", loc="left", fontsize=10)
 
     # C: unit species density with p fixed
     pl = tr["p"]

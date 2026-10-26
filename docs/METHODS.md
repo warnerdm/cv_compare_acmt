@@ -1,15 +1,18 @@
-# Methods: acoustic + trawl uncertainty of species density (Lake Michigan 2021)
+# Methods: acoustic + trawl uncertainty of species density (Lake Michigan, 2021-2024)
 
 Code: `R/strata.R`, `R/data.R`, `R/trawl.R`, `R/estimate.R`; steps `analysis/01`-`05` (`run_all.R`).
 Builds on trawlcomp's first attempt (`D:\pyprojects\trawlcomp\docs\TWO_GEAR_METHODS.md`).
 
 ## Data and strata
 
-- **Acoustics:** EchoNet2Fish interval x 1 m layer output for 2021 (`fish_ha`, sigma from in-situ TS), ship transects
-  and saildrone drone-nights **pooled** into one data set. Each ship transect and each drone-night is one sampling
-  unit.
-- **Trawl:** 2021 midwater tows (the L_2_Y survey tows plus 25 TARGET 119 tows made during the survey; 119411
-  excluded as experimental).
+- **Year:** set by env var `YEAR` (2021, 2022, 2023, 2024; default 2021).
+- **Acoustics:** EchoNet2Fish interval x layer output (`fish_ha`, sigma from in-situ TS; 1 m layers in 2021, 10 m in
+  2022 and 2024, 5 m in 2023). 2021: ship transects and saildrone drone-nights **pooled** into one data set; 2022-2024:
+  ship transects only (20-26, typical effort). Each ship transect and each drone-night is one sampling unit.
+  `fish_ha` Inf (sigma = 0, no single targets) or NA is set to 0, as in EchoNet2Fish.
+- **Trawl:** the year's midwater tows (L_2_Y survey files; 2021 also 25 TARGET 119 tows made during the survey; 119411
+  excluded as experimental). For the trawl spread and the deep proportion, all years with trawl files in `data/trawl`
+  are pooled (2011-2019, 2021-2024: 13 years).
 - **Strata:** the five original strata (nn, no, sn, so, wn) from `data/gis/final_five_strata_new.shp`. Intervals and
   tows are placed by point-in-polygon; a sampling unit goes whole to the stratum holding the majority of its
   intervals. Stratum areas are the polygon areas (Great Lakes Albers).
@@ -18,19 +21,24 @@ Builds on trawlcomp's first attempt (`D:\pyprojects\trawlcomp\docs\TWO_GEAR_METH
 
 - Groups: alewife, rainbow smelt, bloater (by number, summed over life stages). Tows need >= 5 fish of the three;
   alewife in tows fishing deeper than 40 m are set to 0 (contamination).
-- Two depth layers, split at 40 m (tows by fishing depth; acoustic 1 m layers by mid-depth).
+- Two depth layers, split at 40 m (tows by fishing depth; acoustic layers by mid-depth).
 - **D_s = rho_upper,s x p_upper,s + rho_lower,s x p_deep**
   - rho: mean over the stratum's units of the unit's mean (over intervals) summed `fish_ha` in the layer.
-  - p_upper,s: mean of the stratum's 2021 tow proportions above 40 m. p_deep: mean of all 2021 deep tows
-    lake-wide (7 tows), used for every stratum.
+  - p_upper,s: mean of the stratum's tow proportions above 40 m in the year. p_deep: mean of all pooled years' deep
+    tows lake-wide (57 tows, 2011-2024; user 2026-10-26: deep composition shows no year effect), used for every
+    stratum.
 
 ## Uncertainty (method 1, analytic)
 
 - **Acoustic:** each unit's species density with the proportions fixed, D_u = rho_upper,u p_upper + rho_lower,u p_deep;
   Var_ac = variance of D_u over the stratum's units / number of units.
-- **Trawl:** SE(p) = SD / sqrt(tows). Above 40 m, SD = sqrt(rho_od x p(1 - p)), where rho_od is one overdispersion
-  (intra-tow correlation) per species pooled over all strata (alewife 0.63, bloater 0.65, smelt 0.55); this scales
-  each stratum's SD to its own composition. Deep: the SD of the 7 deep tows.
+- **Trawl** (user, 2026-10-26: pool the spread across years): SE(p) = SD / sqrt(tows).
+  - Above 40 m: SD = the stratum's **pooled within-year SD** over all pooled years,
+    sqrt(sum over years of sum (p_t - pbar_s,y)^2 / sum over years of (n_s,y - 1)), deviations from each year's own
+    stratum mean (so between-year change in composition does not enter). tows = the year's tows in the stratum.
+    Replaces the 2021 within-year pooled overdispersion (rho_od x p(1 - p)), which gave SE = 0 when a stratum's tows
+    that year were all 0 or all 1 for a species.
+  - Deep: SD of all pooled deep tows; tows = their number (57).
   Var_tr = rho_upper^2 SE(p_upper)^2 + rho_lower^2 SE(p_deep)^2.
 - **Product:** Var(rho_upper) SE(p_upper)^2 + Var(rho_lower) SE(p_deep)^2.
 - **Var(D_s) = Var_ac + Var_tr + product** (Goodman 1960). The shares of the three terms show which gear drives the

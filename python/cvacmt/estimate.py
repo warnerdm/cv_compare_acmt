@@ -3,8 +3,9 @@
 - Acoustics: ship + saildrone POOLED; unit = transect or drone-night (majority stratum). Per interval, rho_layer =
   sum of fish_ha over its 1 m layers in the layer (by mid-depth); unit value = mean over intervals; stratum rho =
   mean over units.
-- Trawl: above 40 m by stratum; 40 m and deeper one lake-wide proportion (all the year's deep tows). SE above 40 m =
-  sqrt(rho_od p(1 - p)) / sqrt(tows), rho_od a pooled overdispersion per species; deep SE = SD / sqrt(tows).
+- Trawl (user, 2026-10-26: pool the spread across years and the deep p): above 40 m, p = the stratum's mean of the
+  year's tows; SE = the stratum's pooled within-year SD (all TRAWL_YEARS) / sqrt(the year's tows). 40 m and deeper:
+  one lake-wide proportion from all TRAWL_YEARS' deep tows; SE = their SD / sqrt(their number).
 - D = rho_upper p_upper + rho_lower p_deep; Var = acoustic + trawl + product (Goodman 1960).
 - Lake-wide mean density = sum(A D) / sum(A); the shared deep proportion's trawl variance enters fully correlated.
 """
@@ -14,7 +15,7 @@ import pandas as pd
 from .data import read_acoustic
 from .paths import PLATFORMS
 from .strata import stratum_areas
-from .trawl import tow_props, layer_of, GROUPS, LAYERS
+from .trawl import tow_props, tow_props_all, layer_of, GROUPS, LAYERS
 
 STRATA = ["nn", "no", "sn", "so", "wn"]
 
@@ -36,33 +37,49 @@ def acoustic_units() -> pd.DataFrame:
              .agg(intervals=("fish_ha", "size"), fish_ha=("fish_ha", "mean")).reset_index())
 
 
-def trawl_cells(tp: pd.DataFrame | None = None) -> pd.DataFrame:
-    """Trawl proportions: upper by stratum (pooled-overdispersion SE), deep lake-wide; one row per stratum x layer x group."""
-    tp = tow_props() if tp is None else tp
-    long = tp.melt(id_vars=["OP_ID", "stratum", "layer"], value_vars=["p_" + g for g in GROUPS.values()],
-                   var_name="group", value_name="p")
+def _long(tp: pd.DataFrame) -> pd.DataFrame:
+    ids = [c for c in ["OP_ID", "year", "stratum", "layer"] if c in tp.columns]
+    long = tp.melt(id_vars=ids, value_vars=["p_" + g for g in GROUPS.values()], var_name="group", value_name="p")
     long["group"] = long["group"].str.removeprefix("p_")
-    up = long[long["layer"] == LAYERS[0]].copy()
-    grp = up.groupby(["stratum", "group"])["p"]
-    up["d2"] = (up["p"] - grp.transform("mean")) ** 2
-    cell = up.groupby(["stratum", "group"]).agg(ss=("d2", "sum"), n_s=("p", "size"), pbar=("p", "mean"))
-    cell["w"] = (cell["n_s"] - 1) * cell["pbar"] * (1 - cell["pbar"])
-    rho_od = (cell.groupby("group")["ss"].sum() / cell.groupby("group")["w"].sum()).rename("rho_od").reset_index()
-    upper = (up.groupby(["stratum", "group"])
-               .agg(tows=("p", "size"), sd_own=("p", lambda x: x.std(ddof=1) if len(x) > 1 else np.nan), p=("p", "mean"))
-               .reset_index().merge(rho_od, on="group"))
+    return long
+
+
+def _sd_or_nan(x: pd.Series) -> float:
+    return x.std(ddof=1) if len(x) > 1 else np.nan
+
+
+def trawl_cells(tp: pd.DataFrame | None = None, tp_all: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Trawl proportions: upper by stratum, deep lake-wide; one row per stratum x layer x group.
+    tp = the year's tows; tp_all = all pooled years' tows (with `year`). sd = the SD used; sd_own = the year's own SD;
+    df = degrees of freedom of sd; years = years contributing."""
+    tp = tow_props() if tp is None else tp
+    tp_all = tow_props_all() if tp_all is None else tp_all
+    long, la = _long(tp), _long(tp_all)
+    up = long[long["layer"] == LAYERS[0]]
+    # pooled within-year SD per stratum x group: deviations from each year's own stratum mean
+    ua = la[la["layer"] == LAYERS[0]].copy()
+    ua["d2"] = (ua["p"] - ua.groupby(["year", "stratum", "group"])["p"].transform("mean")) ** 2
+    cy = ua.groupby(["year", "stratum", "group"]).agg(ss=("d2", "sum"), n=("p", "size")).reset_index()
+    cy["df"] = cy["n"] - 1
+    sd_pool = cy.groupby(["stratum", "group"]).agg(ss=("ss", "sum"), df=("df", "sum"), years=("year", "size")).reset_index()
+    sd_pool["sd"] = np.sqrt(sd_pool["ss"] / sd_pool["df"])
+    upper = (up.groupby(["stratum", "group"]).agg(tows=("p", "size"), sd_own=("p", _sd_or_nan), p=("p", "mean"))
+               .reset_index().merge(sd_pool[["stratum", "group", "sd", "df", "years"]], on=["stratum", "group"], how="left"))
+    if upper["sd"].isna().any():
+        raise ValueError(f"no pooled upper-layer SD for: {sorted(upper.loc[upper['sd'].isna(), 'stratum'].unique())}")
     upper["layer"] = LAYERS[0]
     upper["source"] = "stratum"
-    upper["sd"] = np.sqrt(upper["rho_od"] * upper["p"] * (1 - upper["p"]))
     upper["se_p"] = upper["sd"] / np.sqrt(upper["tows"])
-    dp = (long[long["layer"] == LAYERS[1]].groupby("group")
-              .agg(tows=("p", "size"), sd=("p", lambda x: x.std(ddof=1)), p=("p", "mean")).reset_index())
+    own = long[long["layer"] == LAYERS[1]].groupby("group")["p"].agg(_sd_or_nan).rename("sd_own").reset_index()
+    da = la[la["layer"] == LAYERS[1]]
+    dp = (da.groupby("group").agg(tows=("p", "size"), sd=("p", lambda x: x.std(ddof=1)), p=("p", "mean"),
+                                  years=("year", "nunique")).reset_index().merge(own, on="group", how="left"))
+    dp["df"] = dp["tows"] - 1
     dp["se_p"] = dp["sd"] / np.sqrt(dp["tows"])
-    dp["sd_own"] = dp["sd"]
     dp["layer"] = LAYERS[1]
-    dp["source"] = "lake-wide deep"
+    dp["source"] = "lake-wide deep, all years"
     deep = pd.concat([dp.assign(stratum=s) for s in STRATA], ignore_index=True)
-    cols = ["stratum", "layer", "group", "source", "tows", "p", "sd", "sd_own", "se_p", "rho_od"]
+    cols = ["stratum", "layer", "group", "source", "tows", "p", "sd", "sd_own", "se_p", "df", "years"]
     return pd.concat([upper, deep], ignore_index=True).reindex(columns=cols)
 
 

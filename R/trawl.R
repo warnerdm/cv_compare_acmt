@@ -11,14 +11,14 @@ MIN_FISH <- 5
 LAYER_SPLIT_M <- 40
 layer_of <- function(depth) factor(if_else(depth < LAYER_SPLIT_M, "< 40 m", ">= 40 m"), c("< 40 m", ">= 40 m"))
 
-read_catch <- function() {
-  read_csv(trawl_file("tr_catch"), show_col_types = FALSE) %>%
+read_catch <- function(year = YEAR) {
+  read_csv(trawl_file("tr_catch", year), show_col_types = FALSE) %>%
     transmute(OP_ID, SPECIES = as.integer(SPECIES), N = as.numeric(N))
 }
 
 # One row per tow: counts per group, n, fishing depth, layer, stratum; all tows (filter n >= MIN_FISH to use)
-tow_catch <- function(tows = read_tows()) {
-  counts <- read_catch() %>%
+tow_catch <- function(tows = read_tows(year), year = YEAR) {
+  counts <- read_catch(year) %>%
     filter(SPECIES %in% as.integer(names(GROUPS))) %>%
     mutate(group = GROUPS[as.character(SPECIES)]) %>%
     summarise(.by = c(OP_ID, group), N = sum(N)) %>%
@@ -37,4 +37,9 @@ tow_catch <- function(tows = read_tows()) {
 # Tows used for proportions (>= MIN_FISH fish), with each group's proportion
 tow_props <- function(tc = tow_catch()) {
   tc %>% filter(n >= MIN_FISH) %>% mutate(across(all_of(unname(GROUPS)), \(x) x / n, .names = "p_{.col}"))
+}
+
+# Tows used, all pooled trawl years (TRAWL_YEARS), with a `year` column
+tow_props_all <- function(years = TRAWL_YEARS) {
+  bind_rows(lapply(years, \(y) tow_props(tow_catch(read_tows(y), y)) %>% mutate(year = y)))
 }

@@ -25,8 +25,13 @@ OUTPUT_DIR = ROOT / "output" / "python"
 AREA_CRS = 3175  # NAD83 / Great Lakes Albers (equal area)
 
 
-def trawl_file(table: str) -> Path:
-    return TRAWL_DIR / f"L_2_Y_{YEAR}_Acoustic_{table}.csv"
+def trawl_file(table: str, year: int = YEAR) -> Path:
+    return TRAWL_DIR / f"L_2_Y_{year}_Acoustic_{table}.csv"
+
+
+# Trawl years pooled for the between-tow spread (upper) and the deep proportion (user, 2026-10-26): every year with
+# an optrop file in data/trawl
+TRAWL_YEARS = sorted(int(f.name[6:10]) for f in TRAWL_DIR.glob("L_2_Y_[0-9][0-9][0-9][0-9]_Acoustic_optrop.csv"))
 
 
 def out_name(stem: str, ext: str = "csv") -> str:

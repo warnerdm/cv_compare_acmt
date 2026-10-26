@@ -16,7 +16,11 @@ ACOUSTIC    <- setNames(file.path(DATA_DIR, "acoustic", ACOUSTIC_FILES[[as.chara
 PLATFORMS   <- names(ACOUSTIC)
 ACOUSTIC_DESC <- if (length(PLATFORMS) > 1) "ship + saildrone acoustics pooled" else paste(sub("s$", "", PLATFORMS), "acoustics only")
 TRAWL_DIR   <- file.path(DATA_DIR, "trawl")
-trawl_file  <- function(table) file.path(TRAWL_DIR, sprintf("L_2_Y_%d_Acoustic_%s.csv", YEAR, table))
+trawl_file  <- function(table, year = YEAR) file.path(TRAWL_DIR, sprintf("L_2_Y_%d_Acoustic_%s.csv", year, table))
+# Trawl years pooled for the between-tow spread (upper) and the deep proportion (user, 2026-10-26): every year with
+# an optrop file in data/trawl
+TRAWL_YEARS <- sort(as.integer(sub("^L_2_Y_([0-9]{4})_Acoustic_optrop[.]csv$", "\\1",
+  list.files(TRAWL_DIR, "^L_2_Y_[0-9]{4}_Acoustic_optrop[.]csv$"))))
 STRATA_SHP  <- file.path(DATA_DIR, "gis", "final_five_strata_new.shp")
 OUTPUT_DIR  <- file.path(ROOT, "output")
 out_file    <- function(stem, ext = "csv") file.path(OUTPUT_DIR, sprintf("%s_%d.%s", stem, YEAR, ext))

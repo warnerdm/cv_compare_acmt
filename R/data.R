@@ -19,9 +19,9 @@ read_acoustic <- function(platform = PLATFORMS[1]) {
 # Tows left out: 119411 (TARGET 209, transect "exp", experimental; user, 2026-10-24)
 EXCLUDED_TOWS <- c(119411)
 
-# The year's midwater tows (optrop) with their polygon stratum
-read_tows <- function() {
-  read_csv(trawl_file("optrop"), show_col_types = FALSE) %>%
+# One year's midwater tows (optrop) with their polygon stratum
+read_tows <- function(year = YEAR) {
+  read_csv(trawl_file("optrop", year), show_col_types = FALSE, guess_max = 1e4) %>%
     filter(!OP_ID %in% EXCLUDED_TOWS) %>%
     mutate(stratum = point_stratum(BEG_LONGITUDE_DD, BEG_LATITUDE_DD))
 }

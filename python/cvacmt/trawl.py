@@ -4,7 +4,7 @@ fishing deeper than 40 m set to 0 (contamination); tows need >= 5 fish; layers s
 import numpy as np
 import pandas as pd
 
-from .paths import trawl_file
+from .paths import YEAR, TRAWL_YEARS, trawl_file
 from .data import read_tows
 
 GROUPS = {106: "alewife", 109: "smelt", 204: "bloater"}
@@ -18,14 +18,14 @@ def layer_of(depth) -> np.ndarray:
     return np.where(np.asarray(depth, dtype=float) < LAYER_SPLIT_M, LAYERS[0], LAYERS[1])
 
 
-def read_catch() -> pd.DataFrame:
-    return pd.read_csv(trawl_file("tr_catch"))[["OP_ID", "SPECIES", "N"]]
+def read_catch(year: int = YEAR) -> pd.DataFrame:
+    return pd.read_csv(trawl_file("tr_catch", year))[["OP_ID", "SPECIES", "N"]]
 
 
-def tow_catch(tows: pd.DataFrame | None = None) -> pd.DataFrame:
+def tow_catch(tows: pd.DataFrame | None = None, year: int = YEAR) -> pd.DataFrame:
     """One row per tow: counts per group, n, fishing depth, layer, stratum (all tows)."""
-    tows = read_tows() if tows is None else tows
-    c = read_catch()
+    tows = read_tows(year) if tows is None else tows
+    c = read_catch(year)
     c = c[c["SPECIES"].isin(GROUPS.keys())].assign(group=lambda x: x["SPECIES"].map(GROUPS))
     counts = c.pivot_table(index="OP_ID", columns="group", values="N", aggfunc="sum", fill_value=0).reset_index()
     for g in GROUPS.values():
@@ -50,3 +50,9 @@ def tow_props(tc: pd.DataFrame | None = None) -> pd.DataFrame:
     for g in GROUPS.values():
         tp["p_" + g] = tp[g] / tp["n"]
     return tp
+
+
+def tow_props_all(years: list[int] | None = None) -> pd.DataFrame:
+    """Tows used, all pooled trawl years (TRAWL_YEARS), with a `year` column."""
+    years = TRAWL_YEARS if years is None else years
+    return pd.concat([tow_props(tow_catch(year=y)).assign(year=y) for y in years], ignore_index=True)

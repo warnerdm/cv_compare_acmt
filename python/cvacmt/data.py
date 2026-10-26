@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from .paths import ACOUSTIC, PLATFORMS, trawl_file
+from .paths import ACOUSTIC, PLATFORMS, YEAR, trawl_file
 from .strata import read_strata, point_stratum, unit_majority
 
 EXCLUDED_TOWS = [119411]  # TARGET 209, transect "exp", experimental (user, 2026-10-24)
@@ -21,9 +21,9 @@ def read_acoustic(platform: str = PLATFORMS[0]) -> pd.DataFrame:
     return d.merge(unit_majority(iv)[["Region_name", "stratum"]], on="Region_name", how="left")
 
 
-def read_tows() -> pd.DataFrame:
-    """The year's midwater tows with their polygon stratum (119411 excluded)."""
-    t = pd.read_csv(trawl_file("optrop"))
+def read_tows(year: int = YEAR) -> pd.DataFrame:
+    """One year's midwater tows with their polygon stratum (119411 excluded)."""
+    t = pd.read_csv(trawl_file("optrop", year))
     t = t[~t["OP_ID"].isin(EXCLUDED_TOWS)].copy()
     t["stratum"] = point_stratum(t["BEG_LONGITUDE_DD"], t["BEG_LATITUDE_DD"])
     return t
