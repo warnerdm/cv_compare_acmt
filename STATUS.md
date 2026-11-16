@@ -125,3 +125,19 @@
   Best year: nearest 6, GAM all years 6, tree 4, GAM within year 3, slice mean 1. Medians: tree 0.449 (lowest), nearest 0.588.
   Reading: only the all-year GAM beats nearest tow clearly; its edge comes from borrowing across years (the
   within-year GAM loses it). Not discussed with the user yet.
+
+## Calibration: archive vs values in use (2026-11-16, step 11; desk calculation, no data)
+- Source: the release's calibration_values.csv (read in place; sha256 in the step's output). Archive = the ECS each
+  archival survey EV file names (column original_values_used_by_exports); no ECS values -> dt4 header calibration
+  (offsets 0) / Simrad file values. Density dB: dt4 dSv - dTS offset; Simrad -2 dSa - dpsi (gain cancels).
+  output/calibration_desk/calibration_archive_vs_in_use.csv (one row per vessel-year x archive ECS).
+- Simrad (Baird, Sturgeon 2022-2023, Arcticus 2024): density factor 0.99-1.00 everywhere; gains differ by up to 0.33 dB
+  but cancel.
+- dt4, largest density factors (in use / archive): Steelhead 2004 0.57 (archive TS offset 0.03 vs 2.49); Sturgeon 2006
+  1.16-1.72 (three ECS); Steelhead 2007 1.49; Sturgeon 2008 1.51; Sturgeon 2018 1.38; Steelhead 2009 1.25, 2010 1.26;
+  Steelhead 2013 1.22 (archive ECS EMPTY today -> header assumed); Steelhead 2023 1.18 (ECS has no values for the
+  channel -> header); Steelhead 2014 0.70 and Sturgeon 2014 0.71. Most others within 0.9-1.16.
+- Not in the density factor (flags in the table): TS shifts >= 0.5 dB (fixed TS limits), beam angle and angle offset
+  differences (beam compensation). Several archive ECS angle offsets look relative to the header (near 0).
+- Caveats: Steelhead 2013's ECS is 0 bytes today; whether it was empty when the exports were made is not known. The
+  factors are per vessel; the lake-wide effect depends on each vessel's share of the transects. Not discussed with the user yet.
