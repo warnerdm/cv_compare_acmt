@@ -113,3 +113,15 @@
 - Caveats: the GAM borrows across all years (other years' tows inform it), the slice methods only within the year;
   the tree uses no slice structure (Yule et al. fitted per lake-year with their own settings). One GAM fit warned
   (step failure). Not discussed with the user yet.
+- Update (same day, user: a tree that cannot get the 0-40 / >= 40 m split is not right; try a GAM within year).
+  Tree response = each fish's size group (6 classes, no ages), fish-weighted as the user's earlier trees. The one tree
+  per year put its depth split at 9-61 m (2-6 deep tows a year) -> deep score 1.09. Now one tree per year AND layer
+  (40 m rule = first split), cp 0.05, minbucket 5 (Yule). GAM predictions get the 40 m rule too (deep alewife/smelt 0,
+  renormalized). Added a within-year GAM (leave one tow out; fallbacks never needed).
+  Share misassigned: GAM all years 36.6%, tree 39.5%, nearest 40.3%, GAM within year 40.9%, slice mean 40.9%.
+  Paired vs nearest (TAD, 95% CI): GAM all years -0.073 (-0.133, -0.014); tree -0.016 (-0.080, +0.048); slice mean
+  +0.012; GAM within year +0.011 (-0.048, +0.071); tree with every tow equal (sensitivity) -0.050 (-0.110, +0.010).
+  Deep tows: GAM all years 0.190, tree 0.265, slice 0.292, nearest 0.322, GAM within year 0.341.
+  Best year: nearest 6, GAM all years 6, tree 4, GAM within year 3, slice mean 1. Medians: tree 0.449 (lowest), nearest 0.588.
+  Reading: only the all-year GAM beats nearest tow clearly; its edge comes from borrowing across years (the
+  within-year GAM loses it). Not discussed with the user yet.

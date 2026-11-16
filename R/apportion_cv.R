@@ -77,27 +77,69 @@ pred_gam <- function(t, k = 10, seed = 1) {
     pr <- matrix(pr, nrow(te)); pr <- pr / pmax(rowSums(pr), 1e-12)
     out[fold == f, ] <- pr
   }
-  out
+  deep_rule(out, t)
 }
 
-# classification tree per year on fish (weights = counts), leave one tow out (Yule et al.: splits explaining >= 5% of
-# the variation, nodes of >= 5 fish)
-pred_tree <- function(t) {
+# classification tree per year and layer on fish (Yule et al. 2013; one tree per layer, so the first split is the
+# estimates' 40 m rule, which the data alone place elsewhere: 2-6 deep tows a year). Leave one tow out.
+# Response: each fish's size group (6 classes; no ages). Defaults = Yule et al.: splits explaining >= 5% (cp 0.05),
+# nodes of >= 5 fish. weight = "fish" (default, as the user's earlier trees): each fish counts once; "tow": each tow's
+# fish weights sum to 1 (every tow equal, as the score), minbucket then in tows. by_layer = FALSE: one tree per year
+# (depth split left to the data: it fell at 9-61 m, deep-tow score 1.09 vs 0.27 per layer, 2026-11-16).
+pred_tree <- function(t, cp = 0.05, minbucket = 5, weight = c("fish", "tow"), by_layer = TRUE) {
+  weight <- match.arg(weight)
   out <- matrix(NA_real_, nrow(t), length(GROUPS), dimnames = list(NULL, GROUPS))
-  for (y in unique(t$year)) {
-    iy <- which(t$year == y)
+  layer <- if (by_layer) ifelse(t$slice == "deep", "deep", "upper") else rep("all", nrow(t))
+  for (y in unique(t$year)) for (L in unique(layer[t$year == y])) {
+    iy <- which(t$year == y & layer == L)
     long <- do.call(rbind, lapply(iy, function(i) data.frame(row = i, group = factor(GROUPS, GROUPS), w = unlist(t[i, GROUPS]),
       FISHING_DEPTH = t$FISHING_DEPTH[i], bottom = t$bottom[i], Latitude = t$Latitude[i], Longitude = t$Longitude[i])))
     long <- long[long$w > 0, ]
+    if (weight == "tow") long$w <- long$w / ave(long$w, long$row, FUN = sum)
     for (i in iy) {
-      tr <- long[long$row != i, ]; tr$group <- droplevels(tr$group)   # rpart's predict fails on empty classes
+      tr <- long[long$row != i, ]
+      if (!nrow(tr)) next   # alone in its year and layer
+      tr$group <- droplevels(tr$group)   # rpart's predict fails on empty classes
+      if (nlevels(tr$group) == 1) { out[i, ] <- 0; out[i, levels(tr$group)] <- 1; next }   # one group: rpart cannot fit
       m <- rpart::rpart(group ~ FISHING_DEPTH + bottom + Latitude + Longitude, data = tr, weights = w, method = "class",
-                        control = rpart::rpart.control(cp = 0.05, minbucket = 5, xval = 0))
+                        control = rpart::rpart.control(cp = cp, minbucket = minbucket, minsplit = 2 * minbucket, xval = 0))
       pr <- predict(m, t[i, c("FISHING_DEPTH", "bottom", "Latitude", "Longitude")], type = "prob")
       out[i, ] <- 0; out[i, colnames(pr)] <- pr[1, ]
     }
   }
   out
+}
+
+# binomial GAMs per group within one year, leave one tow out (fishing depth, bottom depth, lon/lat; small bases for
+# 19-48 tows). A failed fit drops bottom depth, then location; fits still failing are counted in attr "failed".
+pred_gam_year <- function(t) {
+  out <- matrix(NA_real_, nrow(t), length(GROUPS), dimnames = list(NULL, GROUPS)); failed <- 0
+  forms <- list(~ s(FISHING_DEPTH, k = 4) + s(bottom, k = 4) + s(Longitude, Latitude, k = 8),
+                ~ s(FISHING_DEPTH, k = 4) + s(Longitude, Latitude, k = 8), ~ s(FISHING_DEPTH, k = 4))
+  for (y in unique(t$year)) {
+    iy <- which(t$year == y)
+    for (i in iy) {
+      tr <- t[setdiff(iy, i), ]; te <- t[i, ]
+      out[i, ] <- sapply(GROUPS, function(g) {
+        tr$y <- round(tr[[g]]); tr$nn <- round(tr$total - tr[[g]])
+        if (sum(tr$y) == 0) return(0)
+        for (fm in forms) {
+          m <- tryCatch(suppressWarnings(mgcv::gam(update(cbind(y, nn) ~ 1, fm), family = binomial, data = tr, method = "REML")),
+                        error = function(e) NULL)
+          if (!is.null(m)) return(as.numeric(predict(m, te, type = "response")))
+        }
+        failed <<- failed + 1; sum(tr$y) / sum(tr$y + tr$nn)
+      })
+    }
+  }
+  attr(out, "failed") <- failed; deep_rule(out, t)
+}
+
+# the estimates' 40 m rule for model predictions: no alewife or smelt in deep tows; rows renormalized to sum 1
+deep_rule <- function(p, t) {
+  a <- attributes(p)
+  p[t$slice == "deep", c("ale_small", "ale_large", "smelt_small", "smelt_large")] <- 0
+  p <- p / pmax(rowSums(p), 1e-12); attr(p, "failed") <- a$failed; p
 }
 
 tad <- function(pred, obs) rowSums(abs(pred - obs))
