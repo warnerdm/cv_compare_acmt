@@ -6,3 +6,4 @@ data/
 *.html
 __pycache__/
 *.pyc
+inputs/*/*.RData

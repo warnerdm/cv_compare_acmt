@@ -93,3 +93,23 @@
    rerun: lake-wide alewife 1,055/ha (CV 13%; acoustic 57%), smelt 114 (47%; 8%), bloater 590 (22%; 60%). Cross-year
    figures (07, 08) redrawn ship-only. Python matches R (ships, all, saildrone).
 17. Next: method 2 (bootstrap).
+
+## Apportionment cross-validation (2026-11-16; user: compare nearest tow, slice mean and model predictions)
+- Inputs (step 09): the 20 ACMT.RData of the LM EchoNet2Fish version of record
+  (D:/Acoustics/EchoNet2Fish_LM_versions/v1.3.1_2026-11-15), copied to inputs/version_of_record (RData git-ignored;
+  manifest.csv committed; SHA-256 match the version's MANIFEST).
+- Step 10 (R/apportion_cv.R, analysis/10_apportion_cv.R): 549 tows 2004-2024 with >= 5 fish of six groups (alewife
+  <100/>=100, smelt <90/>=90, bloater <120/>=120 mm; length frequencies scaled to catch; alewife and smelt zeroed at
+  fishing depth >= 40 m). Each tow predicted without itself by: nearest other tow in year+slice; mean of the other tows
+  in year+slice (tow-equal; alone in its slice -> same layer); binomial GAMs per group over all years (fishing depth,
+  bottom depth, lon/lat, year random effect; 10-fold by tow, renormalized); rpart tree per year on fish (cp 0.05,
+  minbucket 5; leave one tow out). Bottom depth = mean of BEG/END (2018: 11 tows lack END -> BEG).
+  Score = total absolute difference (half = share of fish misassigned). Outputs output/apportion_cv/.
+- Results, share misassigned (mean over 548 scored tows): GAM 36.7%, nearest 40.3%, slice mean 40.9%, tree 45.7%.
+  Paired difference vs nearest (TAD, 95% CI): GAM -0.071 (-0.131, -0.012); slice mean +0.012 (-0.034, 0.058);
+  tree +0.109 (0.039, 0.178). Best year: GAM 10, nearest 7, slice mean 2, tree 1. Deep (>= 40 m) tows: GAM 0.205,
+  slice 0.292, nearest 0.322, tree 1.077 (tree unsplit by depth at cp 0.05). Upper: GAM 0.803, nearest 0.869,
+  slice 0.886, tree 0.894.
+- Caveats: the GAM borrows across all years (other years' tows inform it), the slice methods only within the year;
+  the tree uses no slice structure (Yule et al. fitted per lake-year with their own settings). One GAM fit warned
+  (step failure). Not discussed with the user yet.
