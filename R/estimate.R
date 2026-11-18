@@ -1,6 +1,6 @@
 # Method 1 (analytic) species density and its uncertainty, Lake Michigan, year YEAR (user, 2026-10-24).
-# - Acoustics: ship and saildrone POOLED; sampling unit = ship transect or saildrone drone-night, placed in a stratum
-#   by majority. Per interval, rho_layer = sum of fish_ha over its 1 m layers in the layer (by mid-depth); unit value
+# - Acoustics: ship transects; sampling unit = one transect, placed in a stratum
+#   by majority. Per interval, rho_layer = sum of fish_ha over its layers in the layer (by mid-depth); unit value
 #   = mean over its intervals; stratum rho = mean over units.
 # - Trawl (user, 2026-10-26: pool the spread across years and the deep p): above 40 m, p = the stratum's mean of the
 #   year's tows; SE(p) = the stratum's pooled within-year SD (all TRAWL_YEARS) / sqrt(the year's tows). 40 m and
@@ -11,7 +11,7 @@
 #   so its trawl variance enters the lake-wide total as (sum A_s rho_lower,s)^2 SE(p_deep)^2 (fully correlated).
 source("D:/pyprojects/cv_compare_acmt/R/trawl.R")
 
-# Acoustic value per unit x layer (fish/ha), pooled platforms
+# Acoustic value per unit x layer (fish/ha)
 acoustic_units <- function() {
   bind_rows(lapply(PLATFORMS, read_acoustic)) %>%
     mutate(layer = layer_of((Layer_depth_min + Layer_depth_max) / 2)) %>%

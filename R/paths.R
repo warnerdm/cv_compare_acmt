@@ -8,19 +8,11 @@ VOR_DIR     <- file.path(ROOT, "inputs", "version_of_record")
 YEAR        <- as.integer(Sys.getenv("YEAR", "2021"))
 YEARS       <- c(2004:2019, 2021:2024)
 stopifnot(YEAR %in% YEARS)
-# Acoustic files per platform: ships from the version of record; 2021 saildrones (optional runs) from data/acoustic
+# Acoustics: ship transects only (user, 2026-11-18: the saildrone option dropped; ship vs saildrone is ship_vs_usv's).
 ACOUSTIC    <- c(ships = file.path(VOR_DIR, sprintf("acoustic_%d.csv", YEAR)))
-if (YEAR == 2021) ACOUSTIC["saildrone"] <- file.path(DATA_DIR, "acoustic", "L2 Y2021 estimates sd intlaymeans_nph 2025-03-07.csv")
-# Platform (env var PLATFORM): ships (default; user 2026-10-26: ship data only for now, every year), saildrone, or all
-# (pooled ship + saildrone, 2021). Non-default runs are tagged _<year>_<platform> in output names.
-PLATFORM    <- Sys.getenv("PLATFORM", "ships")
-if (PLATFORM != "all") {
-  stopifnot(PLATFORM %in% names(ACOUSTIC))
-  ACOUSTIC <- ACOUSTIC[PLATFORM]
-}
-RUN_TAG     <- if (PLATFORM == "ships") as.character(YEAR) else paste0(YEAR, "_", PLATFORM)
+RUN_TAG     <- as.character(YEAR)
 PLATFORMS   <- names(ACOUSTIC)
-ACOUSTIC_DESC <- if (length(PLATFORMS) > 1) "ship + saildrone acoustics pooled" else paste(sub("s$", "", PLATFORMS), "acoustics only")
+ACOUSTIC_DESC <- "ship acoustics"
 trawl_file  <- function(table, year = YEAR) file.path(VOR_DIR, sprintf("trawl_%d_%s.csv", year, table))
 # Trawl years pooled for the between-tow spread (upper) and the deep proportion (user, 2026-10-26): every year with
 # an optrop file in the inputs (2004-2024)

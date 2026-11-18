@@ -1,7 +1,7 @@
 # Readers for the project's data (Lake Michigan, year YEAR from R/paths.R).
 source("D:/pyprojects/cv_compare_acmt/R/strata.R")
 
-# EchoNet2Fish interval x layer output (1 m layers in 2021, 10 m in 2024) for one platform, with the platform, each
+# EchoNet2Fish interval x layer output (ship transects) with a platform column, each
 # interval's polygon stratum and the unit's majority stratum (`stratum`, used for estimation).
 # fish_ha Inf (sigma = 0: no single targets) or NA = 0, as EchoNet2Fish does (user, 2026-10-26; 2024 file).
 read_acoustic <- function(platform = PLATFORMS[1]) {

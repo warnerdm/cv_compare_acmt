@@ -1,4 +1,4 @@
-# Assign ship transects, saildrone drone-nights and tows to the five strata; tabulate; stratum areas.
+# Assign ship transects and tows to the five strata; tabulate; stratum areas.
 source("D:/pyprojects/cv_compare_acmt/R/data.R")
 dir.create(OUTPUT_DIR, showWarnings = FALSE)
 options(width = 200)

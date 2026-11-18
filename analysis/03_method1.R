@@ -1,4 +1,4 @@
-# Method 1 (analytic): species density by stratum and lake-wide, Lake Michigan, year YEAR, pooled acoustic platforms.
+# Method 1 (analytic): species density by stratum and lake-wide, Lake Michigan, year YEAR, ship acoustics.
 source("D:/pyprojects/cv_compare_acmt/R/estimate.R")
 options(width = 220)
 au <- acoustic_units()

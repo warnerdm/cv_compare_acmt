@@ -1,5 +1,5 @@
 # Method 1 drawn step by step for one stratum and species (env vars STRATUM, GROUP; default sn, bloater), year YEAR,
-# pooled acoustic platforms: A acoustic units by layer; B tow proportions (stratum above 40 m, lake-wide deep);
+# ship acoustics: A acoustic units by layer; B tow proportions (stratum above 40 m, lake-wide deep);
 # C each unit's species density with p fixed; D the variance contributions. Matches step 03.
 source("D:/pyprojects/cv_compare_acmt/R/estimate.R")
 suppressMessages(library(patchwork))
@@ -20,10 +20,10 @@ pA <- ggplot(au, aes(layer, fish_ha)) +
   geom_pointrange(data = rho, aes(y = rho, ymin = rho - se, ymax = rho + se), size = 0.6, position = position_nudge(x = 0.28)) +
   geom_text(data = rho, aes(y = rho, label = sprintf("rho = %.0f\nSE %.0f (n = %d)", rho, se, n)),
             position = position_nudge(x = 0.45), hjust = 0, size = 3.2) +
-  scale_colour_manual(values = c(ships = "#1f4e9c", saildrone = "#2ca25f"), name = NULL) +
-  scale_shape_manual(values = c(ships = 16, saildrone = 17), name = NULL) +
+  scale_colour_manual(values = c(ships = "#1f4e9c"), name = NULL) +
+  scale_shape_manual(values = c(ships = 16), name = NULL) +
   scale_x_discrete(expand = expansion(add = c(0.5, 1.3))) +
-  labs(x = "Depth layer", y = "Fish/ha (all species)", title = "A. Acoustics: each point is one transect or drone-night",
+  labs(x = "Depth layer", y = "Fish/ha (all species)", title = "A. Acoustics: each point is one transect",
        subtitle = paste0("rho = mean of units (", ACOUSTIC_DESC, "); SE = SD / sqrt(units)")) +
   theme_bw(base_size = 10) + theme(legend.position = c(0.85, 0.85), legend.background = element_blank())
 
@@ -53,8 +53,8 @@ pC <- ggplot(C, aes("units", d_u)) +
   geom_pointrange(data = tibble(), aes(x = "units", y = Dm, ymin = Dm - sqrt(var_ac), ymax = Dm + sqrt(var_ac)),
                   size = 0.6, position = position_nudge(x = 0.2), inherit.aes = FALSE) +
   annotate("text", x = 1.3, y = Dm, hjust = 0, size = 3.2, label = sprintf("D = %.0f\nacoustic SE %.0f", Dm, sqrt(var_ac))) +
-  scale_colour_manual(values = c(ships = "#1f4e9c", saildrone = "#2ca25f"), name = NULL) +
-  scale_shape_manual(values = c(ships = 16, saildrone = 17), name = NULL) +
+  scale_colour_manual(values = c(ships = "#1f4e9c"), name = NULL) +
+  scale_shape_manual(values = c(ships = 16), name = NULL) +
   labs(x = NULL, y = paste(GROUP, "/ha"), title = "C. Species density per unit",
        subtitle = sprintf("D_u = rho_upper,u x %.2f + rho_lower,u x %.2f", pl[lv[1]], pl[lv[2]])) +
   theme_bw(base_size = 10) + theme(legend.position = c(0.85, 0.9), legend.background = element_blank())

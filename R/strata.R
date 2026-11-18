@@ -1,6 +1,6 @@
 # Strata (user, 2026-10-24): the five original Lake Michigan strata nn, no, sn, so, wn from the shapefile
-# data/gis/final_five_strata_new.shp. Every ship and saildrone interval and every tow is placed by point-in-polygon;
-# a ship transect or a saildrone drone-night (the acoustic sampling units) goes WHOLE to the stratum holding the
+# data/gis/final_five_strata_new.shp. Every acoustic interval and every tow is placed by point-in-polygon;
+# a ship transect (the acoustic sampling unit) goes WHOLE to the stratum holding the
 # majority of its intervals (e.g. sn11 lies entirely in the so polygon and is so). Stratum areas = polygon areas.
 suppressMessages({ library(tidyverse); library(sf) })
 source("D:/pyprojects/cv_compare_acmt/R/paths.R")

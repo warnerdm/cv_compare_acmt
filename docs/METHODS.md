@@ -9,8 +9,8 @@ Builds on trawlcomp's first attempt (`D:\pyprojects\trawlcomp\docs\TWO_GEAR_METH
 - **Source:** every year's inputs are the Lake Michigan EchoNet2Fish version of record v1.3.1_2026-11-15 (the
   interval x layer output and the run's trawl tables), copied by step 09 to `inputs/version_of_record/`.
 - **Acoustics:** EchoNet2Fish interval x layer output (`fish_ha`, sigma from in-situ TS; 10 m layers except 2023,
-  5 m). **Ship transects only**, every year (14-32 a year; user 2026-10-26). 2021 saildrone drone-nights can be added
-  (`PLATFORM=all`, pooled) or run alone (`PLATFORM=saildrone`). Each transect or drone-night is one sampling unit.
+  5 m). **Ship transects only**, every year (14-32 a year; user 2026-10-26).
+  Each transect is one sampling unit.
   `fish_ha` Inf (sigma = 0, no single targets) or NA is set to 0, as in EchoNet2Fish. 2005: transects nn1 and
   sn6tonn1 share a leg; it is split at the nn/sn boundary (nn1 intervals 1-9 and sn6tonn1 intervals 10-16 left out).
 - **Trawl:** the year's midwater tows in the version of record. For the trawl spread and the deep proportion, all

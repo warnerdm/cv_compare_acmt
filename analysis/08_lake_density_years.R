@@ -21,7 +21,7 @@ p <- ggplot(d, aes(year, density, fill = group)) +
   labs(x = NULL, y = "Lake-wide mean density (fish/ha)",
        title = sprintf("Lake Michigan %d-%d: lake-wide mean density by species", min(years), max(years)),
        subtitle = "Thick bar = +-1 SE; thin bar = approximate 95% interval (+-1.96 SE, truncated at 0). Label = CV.\nMethod 1: acoustic + trawl uncertainty combined.",
-       caption = paste0("Area-weighted over the five strata; all sizes, by number. Acoustics: ship transects only (2021 saildrone data not used). ",
+       caption = paste0("Area-weighted over the five strata; all sizes, by number. Acoustics: ship transects only. ",
                         "No survey in 2020.\n", sprintf("Trawl spread pooled over %d-%d; deep proportion from all years' deep tows.", min(TRAWL_YEARS), max(TRAWL_YEARS)))) +
   theme_bw(base_size = 11) +
   theme(strip.background = element_rect(fill = "grey92"), plot.caption = element_text(hjust = 0))
