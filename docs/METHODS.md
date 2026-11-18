@@ -1,18 +1,20 @@
-# Methods: acoustic + trawl uncertainty of species density (Lake Michigan, 2021-2024)
+# Methods: acoustic + trawl uncertainty of species density (Lake Michigan, 2004-2024)
 
 Code: `R/strata.R`, `R/data.R`, `R/trawl.R`, `R/estimate.R`; steps `analysis/01`-`05` (`run_all.R`).
 Builds on trawlcomp's first attempt (`D:\pyprojects\trawlcomp\docs\TWO_GEAR_METHODS.md`).
 
 ## Data and strata
 
-- **Year:** set by env var `YEAR` (2011-2019, 2021-2024; no survey in 2020; default 2021).
-- **Acoustics:** EchoNet2Fish interval x layer output (`fish_ha`, sigma from in-situ TS; 1 m layers in 2021, 10 m in
-  2022 and 2024, 5 m in 2023). **Ship transects only**, every year (20-35 a year; user 2026-10-26). 2021 saildrone drone-nights can be added
+- **Year:** set by env var `YEAR` (2004-2019, 2021-2024; no survey in 2020; default 2021).
+- **Source:** every year's inputs are the Lake Michigan EchoNet2Fish version of record v1.3.1_2026-11-15 (the
+  interval x layer output and the run's trawl tables), copied by step 09 to `inputs/version_of_record/`.
+- **Acoustics:** EchoNet2Fish interval x layer output (`fish_ha`, sigma from in-situ TS; 10 m layers except 2023,
+  5 m). **Ship transects only**, every year (14-32 a year; user 2026-10-26). 2021 saildrone drone-nights can be added
   (`PLATFORM=all`, pooled) or run alone (`PLATFORM=saildrone`). Each transect or drone-night is one sampling unit.
-  `fish_ha` Inf (sigma = 0, no single targets) or NA is set to 0, as in EchoNet2Fish.
-- **Trawl:** the year's midwater tows (L_2_Y survey files; 2021 also 25 TARGET 119 tows made during the survey; 119411
-  excluded as experimental). For the trawl spread and the deep proportion, all years with trawl files in `data/trawl`
-  are pooled (2011-2019, 2021-2024: 13 years).
+  `fish_ha` Inf (sigma = 0, no single targets) or NA is set to 0, as in EchoNet2Fish. 2005: transects nn1 and
+  sn6tonn1 share a leg; it is split at the nn/sn boundary (nn1 intervals 1-9 and sn6tonn1 intervals 10-16 left out).
+- **Trawl:** the year's midwater tows in the version of record. For the trawl spread and the deep proportion, all
+  years are pooled (2004-2019, 2021-2024: 20 years).
 - **Strata:** the five original strata (nn, no, sn, so, wn) from `data/gis/final_five_strata_new.shp`. Intervals and
   tows are placed by point-in-polygon; a sampling unit goes whole to the stratum holding the majority of its
   intervals. Stratum areas are the polygon areas (Great Lakes Albers).
@@ -25,8 +27,8 @@ Builds on trawlcomp's first attempt (`D:\pyprojects\trawlcomp\docs\TWO_GEAR_METH
 - **D_s = rho_upper,s x p_upper,s + rho_lower,s x p_deep**
   - rho: mean over the stratum's units of the unit's mean (over intervals) summed `fish_ha` in the layer.
   - p_upper,s: mean of the stratum's tow proportions above 40 m in the year. p_deep: mean of all pooled years' deep
-    tows lake-wide (57 tows, 2011-2024; user 2026-10-26: deep composition shows no year effect), used for every
-    stratum.
+    tows lake-wide (68 tows from 16 of the 20 years, 2004-2024; user 2026-10-26: deep composition shows no year
+    effect), used for every stratum.
 
 ## Uncertainty (method 1, analytic)
 
@@ -39,7 +41,7 @@ Builds on trawlcomp's first attempt (`D:\pyprojects\trawlcomp\docs\TWO_GEAR_METH
     Replaces the 2021 within-year pooled overdispersion (rho_od x p(1 - p)), which gave SE = 0 when a stratum's tows
     that year were all 0 or all 1 for a species.
   - Deep: SD of all pooled deep tows; tows = their number.
-  - A stratum with no upper-layer tow (>= 5 fish) in a year (so in 2013 and 2014) takes p from the year's upper tows
+  - A stratum with no upper-layer tow (>= 5 fish) in a year (so in 2013 and 2014, wn in 2010) takes p from the year's upper tows
     in its half of the lake (north = nn + no; south = sn + so + wn, trawlcomp's rule; user 2026-10-26):
     Var(p) = sum_k n_k SD_k^2 / N^2 over the donor strata k (N = donor tows). Because the tows are shared, the
     lake-wide total adds 2 A_b rho_b A_k rho_k SD_k^2 / N for each donor k.
@@ -73,7 +75,7 @@ often barely affect it. Two reasons:
 2. **A CV is relative.** A huge CV can sit on a tiny absolute error when the density is tiny. What adds up in the
    lake-wide uncertainty is each stratum's absolute error (area x SE), not its CV.
 
-**Alewife, 2021 (lake-wide CV 13%, every stratum 18-37%):**
+**Alewife, 2021 (lake-wide CV 13%, every stratum 18-37%; illustration from the 2026-10-24 run on the earlier 2021 inputs, ship + saildrone pooled):**
 
 | Stratum | Density (alewife/ha) | SE | CV | Area x density (alewife) | Area x SE |
 |---|---|---|---|---|---|
@@ -87,7 +89,7 @@ often barely affect it. Two reasons:
 Lake-wide CV = 0.98 / 7.80 = 12.6%. Adding the stratum errors instead (2.06 billion, CV 26%) would assume every
 stratum is off in the same direction. Alewife are spread over all five strata, so the cancellation is strong.
 
-**Smelt, 2021 (lake-wide CV 37%, strata 38-618%):**
+**Smelt, 2021 (lake-wide CV 37%, strata 38-618%; same earlier run):**
 
 | Stratum | Density (smelt/ha) | SE | CV | Area x density (smelt) | Area x SE |
 |---|---|---|---|---|---|

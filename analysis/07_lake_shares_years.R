@@ -2,7 +2,7 @@
 # for every year that has one (run steps 01-03 for each YEAR first).
 source("D:/pyprojects/cv_compare_acmt/R/paths.R")
 suppressMessages(library(tidyverse))
-years <- as.integer(names(ACOUSTIC_FILES))
+years <- YEARS
 years <- years[file.exists(file.path(OUTPUT_DIR, sprintf("method1_lake_%d.csv", years)))]
 d <- map_dfr(years, \(y) read_csv(file.path(OUTPUT_DIR, sprintf("method1_lake_%d.csv", y)), show_col_types = FALSE) %>%
                mutate(year = y)) %>%
@@ -20,9 +20,9 @@ p <- ggplot(long, aes(year_lab, share, fill = source)) +
   labs(x = NULL, y = "Share of the variance of lake-wide density",
        title = sprintf("Lake Michigan %d-%d: where the uncertainty in lake-wide species density comes from", min(years), max(years)),
        subtitle = "Relative contribution of each gear (bars sum to 1). Label = CV and lake-wide mean density, for context.",
-       caption = paste0("Acoustics: ship transects only (20-35 a year; 2021 saildrone data not used). No survey in 2020.\n",
+       caption = paste0("Acoustics: ship transects only (14-32 a year; 2021 saildrone data not used). No survey in 2020.\n",
                         sprintf("Trawl: each year's stratum proportions above 40 m with the between-tow SD pooled over %d-%d; ", min(TRAWL_YEARS), max(TRAWL_YEARS)),
-                        "deep proportion from all years' deep tows. so 2013-2014: no upper tows, south half (sn + wn) used.")) +
+                        "deep proportion from all years' deep tows. No upper tows: so 2013-2014 used sn + wn, wn 2010 used sn + so (south half).")) +
   theme_bw(base_size = 11) +
   theme(strip.background = element_rect(fill = "grey92"), legend.position = "bottom", plot.caption = element_text(hjust = 0))
 ggsave(file.path(OUTPUT_DIR, sprintf("lake_shares_%d_%d.png", min(years), max(years))), p, width = 12, height = 9.5, dpi = 150)

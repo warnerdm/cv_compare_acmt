@@ -7,3 +7,5 @@ data/
 __pycache__/
 *.pyc
 inputs/*/*.RData
+inputs/*/*.csv
+!inputs/*/manifest.csv

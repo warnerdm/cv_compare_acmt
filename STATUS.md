@@ -142,12 +142,27 @@
 - Caveats: Steelhead 2013's ECS is 0 bytes today; whether it was empty when the exports were made is not known. The
   factors are per vessel; the lake-wide effect depends on each vessel's share of the transects. Not discussed with the user yet.
 
-## Inputs: version of record for all years (DECIDED, user; recorded here 2026-11-18)
-- All steps, every year 2004-2024, read the LM EchoNet2Fish version of record
-  D:/Acoustics/EchoNet2Fish_LM_versions/v1.3.1_2026-11-15 (MI<year>/ intlaymeans_nph csv; trawl optrop/trcatch/trlf in
-  ACMT.RData; copies + manifest in inputs/version_of_record). Decided in the EchoNet2Fish session; not yet carried out in
-  steps 01-08, which still read data/acoustic and data/trawl (2011-2024). Checked 2026-11-18: same columns; 2011
-  identical (1,602 rows fish_ha, 30 tows).
-- 2022's revised inputs: not an issue (user).
-- 2005: apply the nn1/sn6tonn1 split decided in D:/projects/lm_echonet2fish_rerun/TIDYING.md (row 2005): keep
-  sn6tonn1 intervals 1-9 and nn1 intervals 10-27; drop nn1 intervals 1-9 and sn6tonn1 intervals 10-16.
+## Inputs: version of record for all years (user decision; carried out 2026-11-18)
+- Every year 2004-2024 reads the LM EchoNet2Fish version of record v1.3.1_2026-11-15 (decided in the EchoNet2Fish
+  session). Step 09 copies each year's acoustic_<year>.csv (intlaymeans_nph) and ACMT_<year>.RData (SHA-256 checked
+  against the version's MANIFEST) and writes trawl_<year>_{optrop,tr_catch}.csv from the RData; R/paths.R and
+  python/cvacmt/paths.py read only these (2021 saildrone file still from data/acoustic). 2013's optrop lacks BEG_*_DD:
+  filled from Latitude/Longitude (all 31 tows in the same stratum either way).
+- 2005: nn1/sn6tonn1 shared leg split as decided in D:/projects/lm_echonet2fish_rerun/TIDYING.md (R/data.R and
+  python EXCLUDED_INTERVALS: drop nn1 1-9, sn6tonn1 10-16): 398 -> 382 intervals. 2022 revised inputs: not an issue (user).
+- Version of record vs the earlier inputs (2011-2024): identical fish_ha and tows in 2011, 2012, 2014-2017, 2023, 2024;
+  2013 one tow fewer (86724, no catch; no effect); 2018/2019 91/140 extra empty rows (fish_ha 0; no effect: the
+  layer sums fill 0); 2022 the revised inputs. 2021 differs: the version of record has the archived survey run (25
+  transects, 10 m layers, 41 tows = bloaterTS's), the earlier inputs the 2026-11-04 reprocessing (35 transects, 1 m
+  layers, 67 tows incl. 25 TARGET 119).
+- Rerun (R steps 01-08, every year; Python matches R in every year, worst relative difference 4.7e-8). Units 14-32 a year
+  (2006 14, 2010 17). New borrowing case: wn 2010 has no upper tow -> south half (sn + so), as so 2013-2014. Deep
+  layer: 68 tows from 16 years, bloater p 0.933. Unit majority tie: 2005 so2 (50/50) goes to sn.
+- Lake-wide shares 2004-2024 (output/lake_shares_2004_2024.png; density figure lake_density_2004_2024.png):
+  alewife acoustic-dominated in most years (acoustic 46-89%) except 2006 (19%), 2008 (35%), 2021 (41%), 2007/2015/2024 ~half;
+  smelt trawl-dominated in most years, acoustic larger in 2007 (62%), 2009 (55%), 2011 (53%); bloater trawl-dominated
+  while scarce (2004-2007, 2010-2013; CV 52-1,736%), acoustic-dominated 2009, 2015, 2019, 2021, 2022.
+- 2021 (now 25 transects, 41 tows): alewife 519/ha (CV 28%; acoustic 41%) vs 1,055 (13%; 57%) on the earlier inputs;
+  bloater 837 (28%; 85%) vs 590 (22%; 60%); smelt 102 (62%; 4%) vs 114 (47%; 8%). Other years change only through the
+  wider trawl pooling (e.g. 2016 alewife acoustic 61% -> 65%, 2024 unchanged at 51%).
+- data/acoustic and data/trawl are no longer read except the 2021 saildrone file.

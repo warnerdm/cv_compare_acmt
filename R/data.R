@@ -8,12 +8,24 @@ read_acoustic <- function(platform = PLATFORMS[1]) {
   platform <- match.arg(platform, PLATFORMS)
   f <- ACOUSTIC[[platform]]
   d <- read_csv(f, show_col_types = FALSE, guess_max = 1e5) %>%
-    mutate(platform = platform, fish_ha = if_else(is.finite(fish_ha), fish_ha, 0))
+    mutate(platform = platform, fish_ha = if_else(is.finite(fish_ha), fish_ha, 0)) %>%
+    drop_excluded_intervals()
   g <- read_strata()
   iv <- d %>% distinct(Region_name, Interval, Lat_M, Lon_M) %>%
     mutate(interval_stratum = point_stratum(Lon_M, Lat_M, g))
   d %>% left_join(select(iv, Region_name, Interval, interval_stratum), by = c("Region_name", "Interval")) %>%
     left_join(select(unit_majority(iv), Region_name, stratum), by = "Region_name")
+}
+
+# Intervals left out (user, 2026-11-14; D:/projects/lm_echonet2fish_rerun/TIDYING.md, row 2005): in 2005 transects nn1
+# and sn6tonn1 share a leg (the same pings). Split at the nn/sn stratum boundary, as in the release EV files: keep
+# sn6tonn1 intervals 1-9 and nn1 intervals 10-27; drop nn1 intervals 1-9 and sn6tonn1 intervals 10-16.
+EXCLUDED_INTERVALS <- tibble(year = 2005, Region_name = c("nn1", "sn6tonn1"), first = c(1, 10), last = c(9, 16))
+drop_excluded_intervals <- function(d, year = YEAR) {
+  x <- filter(EXCLUDED_INTERVALS, .data$year == .env$year)
+  for (i in seq_len(nrow(x)))
+    d <- filter(d, !(Region_name == x$Region_name[i] & Interval >= x$first[i] & Interval <= x$last[i]))
+  d
 }
 
 # Tows left out: 119411 (TARGET 209, transect "exp", experimental; user, 2026-10-24)

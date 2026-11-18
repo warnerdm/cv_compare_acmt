@@ -3,7 +3,7 @@
 # (+-1.96 SE, truncated at 0).
 source("D:/pyprojects/cv_compare_acmt/R/paths.R")
 suppressMessages(library(tidyverse))
-years <- as.integer(names(ACOUSTIC_FILES))
+years <- YEARS
 years <- years[file.exists(file.path(OUTPUT_DIR, sprintf("method1_lake_%d.csv", years)))]
 d <- map_dfr(years, \(y) read_csv(file.path(OUTPUT_DIR, sprintf("method1_lake_%d.csv", y)), show_col_types = FALSE) %>%
                mutate(year = y)) %>%

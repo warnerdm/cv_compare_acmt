@@ -1,6 +1,6 @@
 # Python version (core steps)
 
-A Python version of the project's core steps for Lake Michigan (any year 2011-2024; env var YEAR), mirroring the R code in `../R/`:
+A Python version of the project's core steps for Lake Michigan (any year 2004-2019, 2021-2024; env var YEAR; inputs from the version of record, see ../CLAUDE.md), mirroring the R code in `../R/`:
 strata from the shapefile (point-in-polygon, majority per acoustic unit, polygon areas), the trawl rules and
 proportions, acoustic units (ship transects by default; env var PLATFORM=all pools the 2021 saildrone drone-nights,
 PLATFORM=saildrone runs them alone), and method 1 (species density with its acoustic, trawl and
@@ -21,7 +21,7 @@ product variance, by stratum and lake-wide). See `../docs/METHODS.md` for the me
 conda env create -f ../environment.yml      # once: python 3.12, pandas, numpy, geopandas, pyproj, matplotlib
 conda activate cv_compare_acmt
 cd python
-# year: set env var YEAR (default 2021; 2024 available), e.g. YEAR=2024 python run_method1.py
+# year: set env var YEAR (default 2021; 2004-2024), e.g. YEAR=2024 python run_method1.py
 python run_method1.py   # writes output/python/method1_*_<year>.csv (same names and columns as R step 03)
 python validate.py      # compares with the R output (output/method1_*.csv); needs R step 03 run first
 python make_figures.py  # output/python: worked_<stratum>_<group>_2021.png (sn bloater, nn alewife,

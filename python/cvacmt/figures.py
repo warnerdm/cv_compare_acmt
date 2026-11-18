@@ -177,8 +177,8 @@ def lake_density(lake: pd.DataFrame, path=None):
 def lake_shares_years(path=None) -> pd.DataFrame:
     """Lake-wide shares of the variance across years (R step 07), from output/python/method1_lake_<year>.csv of every
     year that has one (run run_method1.py for each YEAR first)."""
-    from .paths import ACOUSTIC_FILES, OUTPUT_DIR
-    years = [y for y in sorted(ACOUSTIC_FILES) if (OUTPUT_DIR / f"method1_lake_{y}.csv").exists()]
+    from .paths import YEARS, OUTPUT_DIR
+    years = [y for y in YEARS if (OUTPUT_DIR / f"method1_lake_{y}.csv").exists()]
     d = pd.concat([pd.read_csv(OUTPUT_DIR / f"method1_lake_{y}.csv").assign(year=y) for y in years], ignore_index=True)
     fig, axs = plt.subplots(len(GROUP_ORDER), 1, figsize=(12, 9.5), sharex=True)
     for ax, g in zip(axs, GROUP_ORDER):
@@ -199,10 +199,10 @@ def lake_shares_years(path=None) -> pd.DataFrame:
     fig.suptitle(f"Lake Michigan {min(years)}-{max(years)}: where the uncertainty in lake-wide species density comes from\n"
                  "Relative contribution of each gear (bars sum to 1). Label = CV and lake-wide mean density, for context.",
                  x=0.01, ha="left", fontsize=10)
-    fig.text(0.01, 0.01, "Acoustics: ship transects only (20-35 a year; 2021 saildrone data not used). "
+    fig.text(0.01, 0.01, "Acoustics: ship transects only (14-32 a year; 2021 saildrone data not used). "
              f"No survey in 2020.\nTrawl: each year's stratum proportions above 40 m with the between-tow SD pooled "
-             f"over {min(TRAWL_YEARS)}-{max(TRAWL_YEARS)}; deep proportion from all years' deep tows. so 2013-2014: no upper "
-             "tows, south half (sn + wn) used.", fontsize=8)
+             f"over {min(TRAWL_YEARS)}-{max(TRAWL_YEARS)}; deep proportion from all years' deep tows. No upper tows: so 2013-2014 used "
+             "sn + wn, wn 2010 used sn + so (south half).", fontsize=8)
     fig.tight_layout(rect=(0, 0.1, 1, 1))
     if path is not None:
         fig.savefig(path, dpi=150)
@@ -213,8 +213,8 @@ def lake_shares_years(path=None) -> pd.DataFrame:
 def lake_density_years(path=None) -> pd.DataFrame:
     """Lake-wide mean density per species across years (R step 08): thick bar +-1 SE, thin bar ~95% (+-1.96 SE,
     truncated at 0), label = CV. Reads output/python/method1_lake_<year>.csv of every year that has one."""
-    from .paths import ACOUSTIC_FILES, OUTPUT_DIR
-    years = [y for y in sorted(ACOUSTIC_FILES) if (OUTPUT_DIR / f"method1_lake_{y}.csv").exists()]
+    from .paths import YEARS, OUTPUT_DIR
+    years = [y for y in YEARS if (OUTPUT_DIR / f"method1_lake_{y}.csv").exists()]
     d = pd.concat([pd.read_csv(OUTPUT_DIR / f"method1_lake_{y}.csv").assign(year=y) for y in years], ignore_index=True)
     cols = {"alewife": "magenta", "smelt": "grey", "bloater": "0.15"}
     fig, axs = plt.subplots(len(GROUP_ORDER), 1, figsize=(10, 9), sharex=True)
