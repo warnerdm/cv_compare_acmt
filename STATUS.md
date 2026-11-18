@@ -141,3 +141,13 @@
   differences (beam compensation). Several archive ECS angle offsets look relative to the header (near 0).
 - Caveats: Steelhead 2013's ECS is 0 bytes today; whether it was empty when the exports were made is not known. The
   factors are per vessel; the lake-wide effect depends on each vessel's share of the transects. Not discussed with the user yet.
+
+## Inputs: version of record for all years (DECIDED, user; recorded here 2026-11-18)
+- All steps, every year 2004-2024, read the LM EchoNet2Fish version of record
+  D:/Acoustics/EchoNet2Fish_LM_versions/v1.3.1_2026-11-15 (MI<year>/ intlaymeans_nph csv; trawl optrop/trcatch/trlf in
+  ACMT.RData; copies + manifest in inputs/version_of_record). Decided in the EchoNet2Fish session; not yet carried out in
+  steps 01-08, which still read data/acoustic and data/trawl (2011-2024). Checked 2026-11-18: same columns; 2011
+  identical (1,602 rows fish_ha, 30 tows).
+- 2022's revised inputs: not an issue (user).
+- 2005: apply the nn1/sn6tonn1 split decided in D:/projects/lm_echonet2fish_rerun/TIDYING.md (row 2005): keep
+  sn6tonn1 intervals 1-9 and nn1 intervals 10-27; drop nn1 intervals 1-9 and sn6tonn1 intervals 10-16.
