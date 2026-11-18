@@ -10,7 +10,7 @@ Dated entries, newest first. The current state is in STATUS.md.
   D:\projects\lm_acoustic_data_release\docs\checks\calibration_desk (both reproduce identically there); Python copy
   retired (validated = R in all 20 years before removal; in git history); 2021 saildrone / PLATFORM option removed;
   docs/PAPER_A.md written (objectives agreed in general). Rerun after the tidy: method-1 outputs byte-identical.
-- data/acoustic and data/trawl (old inputs) no longer read; the user moves them out.
+- data/acoustic and data/trawl (old inputs) moved out of the project by the user; data/ now holds only gis/. Checked: 2024 steps 01-03 still run and match.
 
 ## History before 2026-11-18 (the former STATUS.md, unchanged)
 

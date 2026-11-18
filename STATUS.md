@@ -16,7 +16,6 @@ means for effort. Objectives: `docs/PAPER_A.md`. Dated history: `STATUS_log.md`.
 
 ## Open
 - Whether objectives 1-2 count as done (user: discuss later).
-- data/acoustic and data/trawl: old inputs, no longer read; the user moves them out.
 
 ## Next (Paper A objectives not built yet)
 - 3: what drives the trawl share (abundance, p near 0/1, tows, transects).
