@@ -16,7 +16,7 @@ cat(sprintf("working set: %d tows; beg depth %g-%g m, end depth %g-%g m, fishing
             min(ws$fishing_depth), max(ws$fishing_depth)))
 
 p <- plot_adams_fig2(ws, title = "Adams et al. (2006) Figure 2, rebuilt: 1994 Grayling + 1995 Steelhead tows",
-                     caption = sprintf("%d tows (paper: 141). Bottom depth = depth at the start of the tow. Proportions by weight, nonprey species excluded.",
+                     caption = sprintf("%d tows (paper: 141; 20325, fished at the lakebed, left out). Bottom depth = depth at the start of the tow. Proportions by weight, nonprey species excluded.",
                                        nrow(ws)))
 ggsave(file.path(OUTPUT_DIR, "adams_fig2_1994_1995.png"), p, width = 8, height = 6.5, dpi = 200)
 

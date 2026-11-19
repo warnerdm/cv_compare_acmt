@@ -11,6 +11,8 @@ Dated entries, newest first. The current state is in STATUS.md.
   R/adams.R + step 11 draw Figure 2 (proportions by weight; nonprey codes 307, 203, 127, 404, 301 dropped).
 - Bottom depth = BEG_DEPTH (inferred: working-set BEG_DEPTH spans 10-140 m as the paper; END_DEPTH reaches 153 m).
   Fishing depth 4-90 m (paper 5-90 m).
+- 20325 (1995 Steelhead, fished at 40 m over 40 m bottom) left out (user: nothing that close to the bottom in the
+  paper's Figure 2): 141 tows, the paper's total, but 53 (1994) + 88 (1995) against the paper's 52 + 89.
 
 ## 2026-11-18
 - Inputs switched to the LM EchoNet2Fish version of record for every year, 2004-2024 (user decision); 2005

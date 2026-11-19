@@ -2,7 +2,8 @@
 # midwater tows (inputs/adams_1994_1995, copied by step 10). Background: trawlcomp R/strata.R did the same method on
 # 2004-2024 tows.
 # Tows in the release (TARGET 210): 1994 Grayling (vessel 11) 53, Steelhead (17) 16; 1995 Grayling 1, Steelhead 89.
-# Paper: 52 in 1994, 89 in 1995. Working set (2026-11-19): 1994 Grayling + 1995 Steelhead = 142, one more than the paper.
+# Paper: 52 in 1994, 89 in 1995. Working set (2026-11-19): 1994 Grayling + 1995 Steelhead = 142, less ADAMS_EXCLUDED = 141
+# (paper total; but 53 + 88 by year, not 52 + 89).
 # Bottom depth: BEG_DEPTH. The paper gives 10-140 m bottom depths; BEG_DEPTH of the working set spans 10-140 m, END_DEPTH
 # reaches 153 m. Inferred, not stated in the paper.
 library(tidyverse)
@@ -14,6 +15,10 @@ ADAMS_SPECIES <- c(`106` = "alewife", `204` = "bloater", `109` = "smelt")
 # Chinook salmon). These five large-bodied codes are the only ones of that kind in the 1994-95 catch: 203 whitefish,
 # 127 burbot, 404 longnose sucker; 307 and 301 lake trout / Chinook (which is which not checked; both dropped).
 ADAMS_NONPREY <- c(307, 203, 127, 404, 301)
+
+# Tows left out of the working set (user, 2026-11-19): 20325 (1995 Steelhead, 15 Sep) fished at 40 m with the bottom
+# at 40 m (start; 53 m at the end), the only tow at the lakebed; nothing that close to the bottom in the paper's Figure 2.
+ADAMS_EXCLUDED <- c(20325)
 
 adams_read <- function(f) read_csv(file.path(ADAMS_DIR, f), show_col_types = FALSE, col_types = cols(.default = "c"))
 
@@ -28,7 +33,7 @@ adams_tows <- function() {
               date = dmy(OP_DATE), beg_depth = num(BEG_DEPTH), end_depth = num(END_DEPTH)) %>%
     left_join(adams_read("TR_OP.csv") %>% transmute(OP_ID = as.integer(OP_ID), fishing_depth = num(FISHING_DEPTH)),
               by = "OP_ID") %>%
-    mutate(in_working_set = (YEAR == 1994 & VESSEL == 11) | (YEAR == 1995 & VESSEL == 17))
+    mutate(in_working_set = ((YEAR == 1994 & VESSEL == 11) | (YEAR == 1995 & VESSEL == 17)) & !OP_ID %in% ADAMS_EXCLUDED)
   w <- adams_read("TR_CATCH.csv") %>%
     transmute(OP_ID = as.integer(OP_ID), SPECIES = as.integer(SPECIES), WEIGHT = num(WEIGHT)) %>%
     mutate(group = if_else(SPECIES %in% ADAMS_NONPREY, "nonprey",
