@@ -112,3 +112,12 @@ for smelt and bloater.)
 
 Reference: Goodman, L. A. 1960. On the exact variance of products. Journal of the American Statistical Association
 55: 708-713.
+
+## Adams et al. (2006) reproduction (1994-1995 tows)
+
+- **Source:** USGS release "Great Lakes Research Vessel Operations 1958-2018" ver. 3.0 (bloaterTS's copy), LAKE 2,
+  1994-1995, SAMPLE_TYPE 1, TARGET 210; copied by step 10 to `inputs/adams_1994_1995/`.
+- **Tows:** 1994 Grayling (vessel 11) + 1995 Steelhead (vessel 17): 142 (paper 141; extra tow not yet identified).
+- **Catch:** proportion by weight of alewife (106), bloater (204), rainbow smelt (109) of all catch except the nonprey
+  species (codes 307, 203, 127, 404, 301: lake trout, lake whitefish, burbot, longnose sucker, Chinook salmon).
+- **Depths:** bottom depth = BEG_DEPTH (inferred from the paper's 10-140 m range); fishing depth = FISHING_DEPTH.

@@ -2,6 +2,16 @@
 
 Dated entries, newest first. The current state is in STATUS.md.
 
+## 2026-11-19
+- Adams et al. (2006, NAJFM 26:612-621) reproduction begun (user; moved here from trawlcomp before anything was written
+  there). Their tows are TARGET 210 "Fall Acoustic/Midwater Trawl Stdy" in the USGS release (dates match the paper's
+  survey windows). Release: 1994 Grayling (v11) 53, Steelhead (v17) 16 (one with no catch); 1995 Grayling 1,
+  Steelhead 89. Paper: 52 + 89. Working set 1994 Grayling + 1995 Steelhead = 142.
+- Step 10 copies the 159 tows (OP, OP_TARGET, TR_OP, TR_CATCH rows) into inputs/adams_1994_1995 with a manifest;
+  R/adams.R + step 11 draw Figure 2 (proportions by weight; nonprey codes 307, 203, 127, 404, 301 dropped).
+- Bottom depth = BEG_DEPTH (inferred: working-set BEG_DEPTH spans 10-140 m as the paper; END_DEPTH reaches 153 m).
+  Fishing depth 4-90 m (paper 5-90 m).
+
 ## 2026-11-18
 - Inputs switched to the LM EchoNet2Fish version of record for every year, 2004-2024 (user decision); 2005
   nn1/sn6tonn1 split; all 20 years rerun (details in the history below, "Inputs: version of record for all years").

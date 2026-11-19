@@ -14,8 +14,15 @@ means for effort. Objectives: `docs/PAPER_A.md`. Dated history: `STATUS_log.md`.
   2009, 2015, 2019, 2021, 2022.
 - Strata with no upper tow borrow their half's tows: so 2013-2014 (sn + wn), wn 2010 (sn + so).
 
+- Adams et al. (2006) reproduction started (2026-11-19): 1994-95 tows copied (step 10); Figure 2 rebuilt (step 11,
+  output/adams_fig2_1994_1995.png) from 1994 Grayling + 1995 Steelhead = 142 tows (paper 141).
+
 ## Open
 - Whether objectives 1-2 count as done (user: discuss later).
+
+## Next
+- Adams reproduction: user compares Figure 2 with the paper; find the extra tow; then the depth strata (Figure 4,
+  Table 4: 136 tows, N 32/23/27/54).
 
 ## Next (Paper A objectives not built yet)
 - 3: what drives the trawl share (abundance, p near 0/1, tows, transects).

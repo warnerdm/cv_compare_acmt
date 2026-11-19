@@ -25,6 +25,7 @@ Possible later addition: size groups (small / large bloater and alewife).
 | Shares by stratum (one year) | analysis/05_shares_figure.R | output/shares_by_stratum_<year>.png |
 | Method 1 step by step (one stratum and species) | analysis/04_worked_example.R | output/worked_<stratum>_<group>_<year>.png |
 | Objective 3, 4, 5 | not built yet | |
+| Adams et al. (2006) Figure 2 rebuilt (1994-95 tows; background for effort allocation) | analysis/11_adams_fig2.R | output/adams_fig2_1994_1995.png |
 
 ## Claims and their sources
 

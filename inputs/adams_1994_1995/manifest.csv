@@ -1,0 +1,5 @@
+"file","rows","source","source_sha256","sha256"
+"OP.csv",159,"D:/pyprojects/bloaterTS/data/raw/trawl/OP.csv","98c8eba937f6bdebca67467d6a2bb2d439d1a89405f2a9b6ec9c208639b5dad0","fff4d9528f885560cb6648aee744aac1dbb270289789f6ec30a59bb035150929"
+"OP_TARGET.csv",208,"D:/pyprojects/bloaterTS/data/raw/trawl/OP_TARGET.csv","2e8108983580d10b378e4eafb9aa96814fa56bc0d5aa60f69d86548e8e6380e1","1b1cf9969fc5aa4a2ebb38d9dc5d944c6dc028bbc850bf8346b807893f680e61"
+"TR_OP.csv",159,"D:/pyprojects/bloaterTS/data/raw/trawl/TR_OP.csv","f4f248983f6adebd05f84d7f847c1f3a7116d977157dc0e024d36d95e8074d80","0bc3758a9c759b459a2f4862afa47610f335f1cb60dcd037423adbec2f9e3766"
+"TR_CATCH.csv",461,"D:/pyprojects/bloaterTS/data/raw/trawl/TR_CATCH.csv","6e95c206bcd32e62ef8d49357e8726185860f130f349d1b8a0e9c92580174d56","6386d1ef25b3b74139b19087ec89fc2f8c7be1a8c056bbc991e1bb5e8e8a403a"

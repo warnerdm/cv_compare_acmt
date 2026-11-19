@@ -21,6 +21,9 @@ history); 2021 saildrone option dropped (ship vs saildrone belongs to ship_vs_us
 - 2022's revised inputs: not an issue (user). 2005: nn1/sn6tonn1 shared leg split as decided in
   D:/projects/lm_echonet2fish_rerun/TIDYING.md (R/data.R EXCLUDED_INTERVALS). Settled; don't re-raise.
 - 2021 in the version of record = the archived survey run: 25 transects, 10 m layers, 41 tows.
+- Adams et al. (2006) reproduction (user, 2026-11-19): 1994-1995 TARGET 210 tows from the USGS release (bloaterTS's
+  copy of OP/OP_TARGET/TR_OP/TR_CATCH), copied once by step 10 into `inputs/adams_1994_1995/` (manifest committed).
+  Code `R/adams.R`, step 11. Not part of the version-of-record pipeline.
 - data/gis/final_five_strata_new.shp: the five original strata nn, no, sn, so, wn (WGS 84). Paths: `R/paths.R`.
 
 ## Settled (user, 2026-10-24)
