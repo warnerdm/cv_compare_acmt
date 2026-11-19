@@ -93,23 +93,29 @@ adams_tow_cells <- function(tows, bottom = "beg_depth", cell_m = 20, edge = c("l
            bd_bin = bin(bd), fd_bin = bin(fishing_depth), cell = paste(bd_bin, fd_bin, sep = "_"))
 }
 
-adams_cell_stats <- function(tc, min_tows = 2) {
+# sd: "n-1" (sample SD, R's default) or "n" (divide by the number of tows)
+adams_cell_stats <- function(tc, min_tows = 2, sd = c("n-1", "n")) {
+  sd <- match.arg(sd)
+  sdf <- if (sd == "n-1") stats::sd else \(x) sqrt(mean((x - mean(x))^2))
   tc %>%
     summarise(.by = c(cell, bd_bin, fd_bin), tows = n(),
-              across(all_of(paste0("p_", ADAMS_GROUPS)), list(mean = mean, sd = sd), .names = "{.fn}_{.col}")) %>%
+              across(all_of(paste0("p_", ADAMS_GROUPS)), list(mean = mean, sd = sdf), .names = "{.fn}_{.col}")) %>%
     filter(tows >= min_tows) %>%
     arrange(bd_bin, fd_bin)
 }
 
-adams_links <- function(cs) {
+# Neighbouring cells: "rook" = sharing an edge; "queen" = sharing an edge or a corner
+adams_links <- function(cs, neighbours = c("rook", "queen")) {
+  neighbours <- match.arg(neighbours)
   idx <- seq_len(nrow(cs))
-  as.matrix(expand_grid(i = idx, j = idx) %>%
-    filter(i < j, abs(cs$bd_bin[i] - cs$bd_bin[j]) + abs(cs$fd_bin[i] - cs$fd_bin[j]) == 1))
+  dx <- abs(outer(cs$bd_bin, cs$bd_bin, "-")); dy <- abs(outer(cs$fd_bin, cs$fd_bin, "-"))
+  adj <- if (neighbours == "rook") dx + dy == 1 else pmax(dx, dy) == 1
+  as.matrix(expand_grid(i = idx, j = idx) %>% filter(i < j, adj[cbind(i, j)]))
 }
 
 # Connected blocks of cells (rook neighbours)
-adams_components <- function(cs) {
-  comp <- seq_len(nrow(cs)); links <- adams_links(cs)
+adams_components <- function(cs, neighbours = "rook") {
+  comp <- seq_len(nrow(cs)); links <- adams_links(cs, neighbours)
   repeat {
     changed <- FALSE
     for (r in seq_len(nrow(links))) {
@@ -123,14 +129,15 @@ adams_components <- function(cs) {
 
 # Strata for one tow set: cells of the largest connected block clustered and cut into k. Returns list(tows = tows with
 # their cell and stratum (NA = left out: cell with < min_tows tows, or a cell outside the main block), cells, tree).
-adams_strata <- function(tows, k = 4, bottom = "beg_depth", cell_m = 20, edge = "lower", min_tows = 2) {
+adams_strata <- function(tows, k = 4, bottom = "beg_depth", cell_m = 20, edge = "lower", min_tows = 2,
+                         sd = "n-1", neighbours = "rook") {
   tc <- adams_tow_cells(tows, bottom, cell_m, edge)
-  cs <- adams_cell_stats(tc, min_tows)
-  comp <- adams_components(cs)
+  cs <- adams_cell_stats(tc, min_tows, sd)
+  comp <- adams_components(cs, neighbours)
   cs$block <- comp == as.integer(names(which.max(table(comp))))
   cb <- filter(cs, block)
   feat <- as.matrix(cb[c(paste0("mean_p_", ADAMS_GROUPS), paste0("sd_p_", ADAMS_GROUPS))])
-  tree <- adespatial::constr.hclust(dist(feat), method = "complete", links = adams_links(cb),
+  tree <- adespatial::constr.hclust(dist(feat), method = "complete", links = adams_links(cb, neighbours),
                                     coords = as.matrix(cb[c("bd_bin", "fd_bin")]))
   cb$stratum <- cutree(tree, k)
   cs <- left_join(cs, select(cb, cell, stratum), by = "cell")
@@ -138,8 +145,8 @@ adams_strata <- function(tows, k = 4, bottom = "beg_depth", cell_m = 20, edge = 
 }
 
 # Table 4 style summary: tows, cells, depth ranges, mean (SD) proportion over the stratum's tows. Strata named as the
-# paper by their place: the stratum with the largest mean bloater proportion = Deep; of the rest, the one with the
-# deepest mean bottom depth = Shallow offshore; of the remaining two, the shallower mean fishing depth = Shallow nearshore.
+# paper by composition and place: largest mean bloater proportion = Deep; of the rest, the next largest bloater =
+# Midwater nearshore; of the remaining two, the deeper mean bottom depth = Shallow offshore, the other Shallow nearshore.
 adams_stratum_table <- function(st) {
   s <- st$tows %>% filter(!is.na(stratum)) %>%
     summarise(.by = stratum, tows = n(), cells = n_distinct(cell),
@@ -149,8 +156,8 @@ adams_stratum_table <- function(st) {
               across(all_of(paste0("p_", ADAMS_GROUPS)), list(mean = mean, sd = sd), .names = "{.fn}_{.col}"))
   if (nrow(s) == 4) {
     deep <- s$stratum[which.max(s$mean_p_bloater)]; r <- filter(s, stratum != deep)
-    off <- r$stratum[which.max(r$mbd)]; r <- filter(r, stratum != off)
-    sn <- r$stratum[which.min(r$mfd)]; mn <- setdiff(r$stratum, sn)
+    mn <- r$stratum[which.max(r$mean_p_bloater)]; r <- filter(r, stratum != mn)
+    off <- r$stratum[which.max(r$mbd)]; sn <- setdiff(r$stratum, off)
     nm <- setNames(c("Deep", "Shallow offshore", "Shallow nearshore", "Midwater nearshore"), c(deep, off, sn, mn))
     s$name <- factor(nm[as.character(s$stratum)], c("Shallow nearshore", "Midwater nearshore", "Shallow offshore", "Deep"))
     s <- arrange(s, name)

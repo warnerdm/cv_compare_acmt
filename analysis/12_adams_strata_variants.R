@@ -3,19 +3,21 @@
 #   tows    with or without 20325 (fished at the lakebed)
 #   bottom  start, mean or end bottom depth of the tow
 #   edge    a depth on a 20 m line goes to the cell below or above
+#   sd      cell SD with n-1 or n
+#   nb      neighbouring cells share an edge (rook) or an edge or corner (queen)
 # Writes output/adams_strata_variants.csv (one row per variant x stratum) and prints the scores.
 # Score: kept tows vs 136, sum of |tows - paper| over the four strata, mean |difference| of the 6 mean/SD values x 4.
 source("D:/pyprojects/cv_compare_acmt/R/adams.R")
 dir.create(OUTPUT_DIR, showWarnings = FALSE)
 
 variants <- expand_grid(with_20325 = c(TRUE, FALSE), bottom = c("beg_depth", "mean_depth", "end_depth"),
-                        edge = c("lower", "upper"))
-res <- pmap(variants, \(with_20325, bottom, edge) {
+                        edge = c("lower", "upper"), sd = c("n-1", "n"), nb = c("rook", "queen"))
+res <- pmap(variants, \(with_20325, bottom, edge, sd, nb) {
   tows <- adams_tows(excluded = if (with_20325) integer() else ADAMS_LAKEBED_TOW)
-  st <- adams_strata(tows, bottom = bottom, edge = edge)
+  st <- adams_strata(tows, bottom = bottom, edge = edge, sd = sd, neighbours = nb)
   tab <- adams_stratum_table(st)
-  tibble(with_20325, bottom, edge, tows_in = nrow(st$tows), tows_kept = sum(!is.na(st$tows$stratum)),
-         tab = list(tab))
+  tibble(with_20325, bottom, edge, sd, nb, tows_in = nrow(st$tows), tows_kept = sum(!is.na(st$tows$stratum)),
+         tows_by_stratum = paste(tab$tows, collapse = "/"), tab = list(tab))
 }) %>% list_rbind()
 
 score <- res %>%
@@ -33,7 +35,9 @@ print(arrange(score, tows_diff, value_diff), n = Inf, width = Inf)
 
 out <- res %>% select(-tows_in) %>% unnest(tab)
 write_csv(out, file.path(OUTPUT_DIR, "adams_strata_variants.csv"))
-best <- res[which.min(score$tows_diff + 10 * coalesce(score$value_diff, 9)), ]
-cat("\nBest variant:", best$bottom, best$edge, if (best$with_20325) "with 20325" else "without 20325", "\n")
-print(best$tab[[1]] %>% mutate(across(where(is.numeric), \(x) round(x, 2))), width = Inf)
+# The scores above favour the end-depth runs, but their strata do not have the paper's shape (Shallow offshore 14-17
+# tows); the run closest to the paper on tows kept and stratum shape (2026-11-19) is printed instead.
+ref <- res[res$with_20325 & res$bottom == "beg_depth" & res$edge == "lower" & res$sd == "n-1" & res$nb == "rook", ]
+cat("\nReference run: start depth, lower edge, SD n-1, rook, with 20325\n")
+print(ref$tab[[1]] %>% mutate(across(where(is.numeric), \(x) round(x, 2))), width = Inf)
 cat("\nPaper Table 4:\n"); print(ADAMS_TABLE4, width = Inf)

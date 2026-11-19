@@ -19,7 +19,8 @@ means for effort. Objectives: `docs/PAPER_A.md`. Dated history: `STATUS_log.md`.
 - Depth strata (step 12, 12 variants): start-of-tow bottom depth, lower cell edge, 20325 in keeps 136 tows (paper 136);
   Midwater nearshore 23 (paper 23). The clustering puts the 40-60 m bottom surface cell (15 tows) with Shallow offshore;
   the paper's Figure 4 has it in Shallow nearshore. Moved there: 36 / 23 / 27 / 50 vs paper 32 / 23 / 27 / 54, means
-  and SDs within ~0.05.
+  and SDs within ~0.05. SD with n vs n-1: identical strata in all 24 pairs; queen neighbours (edge or corner): no
+  better, mostly worse (start depth: 40/11/42/43).
 
 ## Open
 - Whether objectives 1-2 count as done (user: discuss later).

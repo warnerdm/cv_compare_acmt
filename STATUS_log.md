@@ -20,6 +20,10 @@ Dated entries, newest first. The current state is in STATUS.md.
   Shallow nearshore as in the paper's Figure 4. With it moved: 36 / 23 / 27 / 50 tows vs 32 / 23 / 27 / 54; means and SDs
   within ~0.05 of Table 4. End depth gives 43 / 24 / 17 / 53. (The step-12 "best" pick names strata by rule and can
   mislabel; read the grid.)
+- Software for the paper's clustering is not stated. Step 12 extended to 48 variants (+ cell SD with n-1 or n; rook or
+  queen neighbours). SD n vs n-1 changes no stratum in any variant; queen neighbours fit worse (start depth, lower edge,
+  with 20325: 40/11/42/43 tows). Step 12 now prints the reference run (start depth, lower edge, n-1, rook, with 20325)
+  instead of a score-based "best" (the score favoured end-depth runs whose Shallow offshore has only 14-17 tows).
 
 ## 2026-11-18
 - Inputs switched to the LM EchoNet2Fish version of record for every year, 2004-2024 (user decision); 2005
