@@ -13,6 +13,13 @@ Dated entries, newest first. The current state is in STATUS.md.
   Fishing depth 4-90 m (paper 5-90 m).
 - 20325 (1995 Steelhead, fished at 40 m over 40 m bottom) left out (user: nothing that close to the bottom in the
   paper's Figure 2): 141 tows, the paper's total, but 53 (1994) + 88 (1995) against the paper's 52 + 89.
+- Put back the same day (user agreed) to be tested by the strata. Step 12 (analysis/12_adams_strata_variants.R; clustering
+  ported from trawlcomp into R/adams.R): 20325 in/out x start/mean/end bottom depth x cell edge. Start depth, lower edge,
+  20325 in: 6 tows in single-tow cells, 136 kept (paper: 5 and 136); Midwater nearshore 23 (paper 23). The 40-60 m
+  bottom x 0-20 m surface cell (15 tows; alewife 0.80 (0.24), smelt 0.18 (0.24)) clusters with Shallow offshore, not
+  Shallow nearshore as in the paper's Figure 4. With it moved: 36 / 23 / 27 / 50 tows vs 32 / 23 / 27 / 54; means and SDs
+  within ~0.05 of Table 4. End depth gives 43 / 24 / 17 / 53. (The step-12 "best" pick names strata by rule and can
+  mislabel; read the grid.)
 
 ## 2026-11-18
 - Inputs switched to the LM EchoNet2Fish version of record for every year, 2004-2024 (user decision); 2005
