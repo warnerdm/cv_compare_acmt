@@ -26,6 +26,7 @@ Possible later addition: size groups (small / large bloater and alewife).
 | Method 1 step by step (one stratum and species) | analysis/04_worked_example.R | output/worked_<stratum>_<group>_<year>.png |
 | Objective 3, 4, 5 | not built yet | |
 | Adams et al. (2006) Figure 2 rebuilt (1994-95 tows; background for effort allocation) | analysis/11_adams_fig2.R | output/adams_fig2_1994_1995.png |
+| Adams et al. (2006) Figure 4 and Table 4 rebuilt | analysis/13_adams_fig4.R | output/adams_fig4_1994_1995.png, adams_table4_1994_1995.csv |
 
 ## Claims and their sources
 

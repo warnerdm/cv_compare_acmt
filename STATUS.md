@@ -21,12 +21,14 @@ means for effort. Objectives: `docs/PAPER_A.md`. Dated history: `STATUS_log.md`.
   the paper's Figure 4 has it in Shallow nearshore. Moved there: 36 / 23 / 27 / 50 vs paper 32 / 23 / 27 / 54, means
   and SDs within ~0.05. SD with n vs n-1: identical strata in all 24 pairs; queen neighbours (edge or corner): no
   better, mostly worse (start depth: 40/11/42/43).
+- Figure 4 and Table 4 rebuilt (step 13; output/adams_fig4_1994_1995.png, adams_table4_1994_1995.csv): reference run
+  with the 40-60 m surface cell put in Shallow nearshore (user). Tows 36/23/27/50 (paper 32/23/27/54).
 
 ## Open
 - Whether objectives 1-2 count as done (user: discuss later).
 
 ## Next
-- Adams reproduction: user decides how to treat the 40-60 m surface cell; then Figure 4.
+- Adams reproduction: Figure 4 + Table 4 done (step 13); user to compare with the paper.
 
 ## Next (Paper A objectives not built yet)
 - 3: what drives the trawl share (abundance, p near 0/1, tows, transects).

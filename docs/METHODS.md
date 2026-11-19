@@ -117,7 +117,15 @@ Reference: Goodman, L. A. 1960. On the exact variance of products. Journal of th
 
 - **Source:** USGS release "Great Lakes Research Vessel Operations 1958-2018" ver. 3.0 (bloaterTS's copy), LAKE 2,
   1994-1995, SAMPLE_TYPE 1, TARGET 210; copied by step 10 to `inputs/adams_1994_1995/`.
-- **Tows:** 1994 Grayling (vessel 11) + 1995 Steelhead (vessel 17): 142, less 20325 (fished at the lakebed; user 2026-11-19) = 141, the paper's total (by year 53 + 88; paper 52 + 89).
+- **Tows:** 1994 Grayling (vessel 11) + 1995 Steelhead (vessel 17): 142 (53 + 89; paper 52 + 89). 20325 (fished at the lakebed) was left out, then put back: with it, 136 tows are kept
+  in strata, as in the paper.
 - **Catch:** proportion by weight of alewife (106), bloater (204), rainbow smelt (109) of all catch except the nonprey
   species (codes 307, 203, 127, 404, 301: lake trout, lake whitefish, burbot, longnose sucker, Chinook salmon).
 - **Depths:** bottom depth = BEG_DEPTH (inferred from the paper's 10-140 m range); fishing depth = FISHING_DEPTH.
+- **Depth strata:** 20 m cells (bottom depth x fishing depth; a depth on a 20 m line goes to the cell below); cells with
+  < 2 tows left out (6 tows; paper 5); each cell's mean and SD (n-1) of the three proportions, years pooled; complete
+  linkage on Euclidean distance, only cells sharing an edge may join (adespatial::constr.hclust); 4 strata. Variants
+  tested in step 12 (bottom depth start/mean/end, cell edge, SD n-1/n, rook/queen). The 40-60 m bottom x 0-20 m
+  surface cell is moved from Shallow offshore to Shallow nearshore to follow the paper's Figure 4 (user, 2026-11-19).
+  Result: 36/23/27/50 tows (paper 32/23/27/54); means and SDs within ~0.05 of Table 4. Allocations not computed (the
+  paper weights strata by acoustic biomass).

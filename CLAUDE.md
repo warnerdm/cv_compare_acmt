@@ -23,7 +23,7 @@ history); 2021 saildrone option dropped (ship vs saildrone belongs to ship_vs_us
 - 2021 in the version of record = the archived survey run: 25 transects, 10 m layers, 41 tows.
 - Adams et al. (2006) reproduction (user, 2026-11-19): 1994-1995 TARGET 210 tows from the USGS release (bloaterTS's
   copy of OP/OP_TARGET/TR_OP/TR_CATCH), copied once by step 10 into `inputs/adams_1994_1995/` (manifest committed).
-  Code `R/adams.R`, step 11. Not part of the version-of-record pipeline.
+  Code `R/adams.R`, steps 11-13 (Figure 2; strata variants vs Table 4; Figure 4 + Table 4). Not part of the version-of-record pipeline.
 - data/gis/final_five_strata_new.shp: the five original strata nn, no, sn, so, wn (WGS 84). Paths: `R/paths.R`.
 
 ## Settled (user, 2026-10-24)

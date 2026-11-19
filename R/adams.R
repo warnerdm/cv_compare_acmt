@@ -172,3 +172,83 @@ ADAMS_TABLE4 <- tribble(
   "Midwater nearshore", 23, 0.40, 0.38, 0.20, 0.32, 0.38, 0.39,
   "Shallow offshore", 27, 0.93, 0.14, 0.05, 0.12, 0.00, 0.01,
   "Deep", 54, 0.06, 0.10, 0.01, 0.04, 0.90, 0.15)
+
+# ---- Reproduction choice (user, 2026-11-19) ----
+# Reference run: start-of-tow bottom depth, lower cell edge, SD n-1, rook neighbours, 20325 in (step 12). The
+# clustering puts the 40-60 m bottom x 0-20 m surface cell with Shallow offshore; the paper's Figure 4 and text (division
+# at 60 m bottom depth) have it in Shallow nearshore, so it is moved there.
+ADAMS_CELL_OVERRIDES <- tribble(~bd_bin, ~fd_bin, ~name,
+                                2, 0, "Shallow nearshore")
+
+# Tows and cells of a strata run with paper names, overrides applied. Returns list(tows, cells, cell_m).
+adams_named_strata <- function(st, overrides = ADAMS_CELL_OVERRIDES) {
+  tab <- adams_stratum_table(st)
+  nm <- setNames(as.character(tab$name), tab$stratum)
+  fix <- \(d) d %>% mutate(name = nm[as.character(stratum)]) %>%
+    left_join(rename(overrides, name_override = name), by = c("bd_bin", "fd_bin")) %>%
+    mutate(name = factor(coalesce(name_override, name), levels(tab$name))) %>% select(-name_override)
+  list(tows = fix(st$tows), cells = fix(st$cells), cell_m = st$cell_m)
+}
+
+# Table 4 from named strata: tows, mean (SD) of each proportion, beside the paper's values
+adams_table4 <- function(ns) {
+  ours <- ns$tows %>% filter(!is.na(name)) %>%
+    summarise(.by = name, tows = n(), cells = n_distinct(cell),
+              across(all_of(paste0("p_", ADAMS_GROUPS)), list(mean = mean, sd = sd), .names = "{.fn}_{.col}")) %>%
+    mutate(name = as.character(name)) %>%
+    pivot_longer(-name, names_to = "var", values_to = "ours")
+  paper <- ADAMS_TABLE4 %>% pivot_longer(-name, names_to = "var", values_to = "paper")
+  full_join(ours, paper, by = c("name", "var")) %>%
+    mutate(name = factor(name, ADAMS_TABLE4$name), var = factor(var, unique(c("tows", "cells", names(ADAMS_TABLE4)[-1])))) %>%
+    arrange(name, var)
+}
+
+# Diagonal hatching (both directions) clipped to a rectangle, on a grid shared by all cells
+adams_hatch <- function(x0, x1, y0, y1, spacing) {
+  cs <- seq(-400, 400, by = spacing)
+  up <- tibble(c = cs, xa = pmax(x0, y0 + c), xb = pmin(x1, y1 + c)) %>%
+    filter(xa < xb) %>% transmute(x = xa, y = xa - c, xend = xb, yend = xb - c)
+  dn <- tibble(c = cs, xa = pmax(x0, c - y1), xb = pmin(x1, c - y0)) %>%
+    filter(xa < xb) %>% transmute(x = xa, y = c - xa, xend = xb, yend = c - xb)
+  bind_rows(up, dn)
+}
+
+# Adams Figure 4: the strata in the water column (bottom depth on the top axis, depth on the right), crosshatching
+# denser where catch composition is more variable (mean over alewife, bloater, smelt of the SD of tow proportions in
+# the stratum), stratum outlines, lakebed diagonal; cells left out (< 2 tows) unhatched.
+plot_adams_fig4 <- function(ns, title = NULL, caption = NULL) {
+  m <- ns$cell_m
+  msd <- ns$tows %>% filter(!is.na(name)) %>%
+    summarise(.by = name, across(all_of(paste0("p_", ADAMS_GROUPS)), sd)) %>%
+    mutate(mean_sd = (p_alewife + p_bloater + p_smelt) / 3) %>% select(name, mean_sd)
+  d <- ns$cells %>% filter(!is.na(name)) %>% left_join(msd, by = "name") %>%
+    mutate(x0 = bd_bin * m, x1 = x0 + m, y0 = fd_bin * m, y1 = y0 + m)
+  hatch <- pmap(d, \(x0, x1, y0, y1, mean_sd, ...) adams_hatch(x0, x1, y0, y1, 0.6 / mean_sd^1.5)) %>% list_rbind() %>%
+    filter(!(x < y - 1e-9 & xend < yend - 1e-9))   # nothing below the lakebed
+  st_of <- setNames(as.character(d$name), paste(d$bd_bin, d$fd_bin))
+  nb <- \(dx, dy) unname(st_of[paste(d$bd_bin + dx, d$fd_bin + dy)])
+  edges <- bind_rows(
+    d %>% mutate(o = nb(-1, 0)) %>% filter(is.na(o) | o != name) %>% transmute(x = x0, y = y0, xend = x0, yend = y1),
+    d %>% mutate(o = nb(1, 0)) %>% filter(is.na(o) | o != name) %>% transmute(x = x1, y = y0, xend = x1, yend = y1),
+    d %>% mutate(o = nb(0, -1)) %>% filter(is.na(o) | o != name) %>% transmute(x = x0, y = y0, xend = x1, yend = y0),
+    d %>% mutate(o = nb(0, 1)) %>% filter(is.na(o) | o != name) %>% transmute(x = x0, y = y1, xend = x1, yend = y1)) %>%
+    # clip at the lakebed (depth = bottom depth): vertical lines end at y = x, horizontal lines start at x = y
+    mutate(yend = if_else(x == xend, pmin(yend, x), yend), x = if_else(y == yend, pmax(x, y), x)) %>%
+    filter(x < xend | y < yend)
+  # label in the stratum's top row of cells
+  labs_df <- d %>% filter(fd_bin == min(fd_bin), .by = name) %>%
+    summarise(.by = c(name, mean_sd), x = mean((x0 + x1) / 2), y = mean((y0 + y1) / 2)) %>%
+    mutate(label = paste0(name, "\nmean SD ", sprintf("%.2f", mean_sd)))
+  ggplot() +
+    geom_segment(data = hatch, aes(x, y, xend = xend, yend = yend), linewidth = 0.25, colour = "grey30") +
+    geom_polygon(data = tibble(x = c(0, 160, 0), y = c(0, 160, 160)), aes(x, y), fill = "white") +
+    geom_segment(data = edges, aes(x, y, xend = xend, yend = yend), linewidth = 0.8) +
+    annotate("segment", x = 0, y = 0, xend = 160, yend = 160) +
+    geom_label(data = labs_df, aes(x, y, label = label), size = 3, linewidth = 0, fill = alpha("white", 0.85),
+               lineheight = 0.9) +
+    scale_x_continuous(position = "top", breaks = seq(20, 140, 20), expand = c(0, 0)) +
+    scale_y_reverse(position = "right", breaks = seq(0, 140, 20), expand = c(0, 0)) +
+    coord_cartesian(xlim = c(0, 160), ylim = c(150, 0)) +
+    labs(x = "Bottom depth (m)", y = "Midwater depth (m)", title = title, caption = caption) +
+    theme_classic(base_size = 11) + theme(plot.caption = element_text(hjust = 0))
+}

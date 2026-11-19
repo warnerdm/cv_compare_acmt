@@ -24,6 +24,10 @@ Dated entries, newest first. The current state is in STATUS.md.
   queen neighbours). SD n vs n-1 changes no stratum in any variant; queen neighbours fit worse (start depth, lower edge,
   with 20325: 40/11/42/43 tows). Step 12 now prints the reference run (start depth, lower edge, n-1, rook, with 20325)
   instead of a score-based "best" (the score favoured end-depth runs whose Shallow offshore has only 14-17 tows).
+- User: put the 40-60 m surface cell in Shallow nearshore (ADAMS_CELL_OVERRIDES). Step 13 draws Figure 4 (hatching
+  spacing 0.6 / mean SD^1.5; outlines clipped at the lakebed) and writes Table 4 beside the paper's and each tow's
+  stratum. Mean SD: Shallow nearshore 0.26, Midwater nearshore 0.35, Shallow offshore 0.03, Deep 0.10. Shape as the
+  paper's Figure 4 (nearshore to 60 m bottom; offshore 60-140 m, to 40 m depth over 100-140 m; Deep along the lakebed).
 
 ## 2026-11-18
 - Inputs switched to the LM EchoNet2Fish version of record for every year, 2004-2024 (user decision); 2005
